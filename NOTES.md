@@ -714,3 +714,26 @@ access back.
 > unit. Re-check after any update. Do not run kiauh/git updaters against this
 > printer (QIDI's warning; the klipper/moonraker trees are version-stripped with
 > no upstream remote — see §4.4).
+
+---
+
+## Orca → printer LAN connection (verified working)
+
+Connected OrcaSlicer 2.5.0-dev to the printer over the LAN, no QIDI cloud. [VERIFIED]
+
+- Orca physical-printer dialog: **Host Type = `Moonraker (Klipper)`**,
+  **Hostname/IP = the bare printer IP** (no port), **API Key = blank**,
+  **Device UI = `http://<printer-ip>`** (optional).
+- Bare IP works because the stock nginx on **port 80 proxies the Moonraker API**
+  (`/server/info`, `/printer/info` return 200 on :80; `/websocket` upgrades).
+  Confirmed. No need to specify :7125. [VERIFIED]
+- No API key required: Moonraker `/access/info` → `login_required: false`, and the
+  workstation IP is inside the printer's `trusted_clients` (192.168.0.0/16). [VERIFIED]
+
+### macOS Local Network permission (gotcha)
+On macOS 15+ (host here is 26.5), apps must be granted **Local Network** access
+before they can reach LAN devices. Observed behaviour: the **first** Orca "Test"
+failed *and* triggered the macOS "OrcaSlicer wants to find devices on your local
+network" prompt simultaneously — the request never left the machine. After
+granting, the **second** Test connected. If the prompt is dismissed, re-enable at
+System Settings → Privacy & Security → Local Network → OrcaSlicer. [VERIFIED on this host]

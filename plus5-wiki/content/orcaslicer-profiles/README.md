@@ -40,9 +40,34 @@ Per-nozzle deltas (layer-height range, retraction length, the 0.8's longer
 tool-change retract) are all carried across. So: faithful port. No reason to
 hand-roll your own, and I say that as someone who was about to.
 
-## Connecting Orca to the printer
+## Connecting Orca to the printer over the LAN
 
-Point Orca at the printer's IP over Moonraker, port 7125. On the stock image
-Moonraker is open on the LAN with no API key, so upload and monitoring just work.
-Convenient, and also worth knowing about if you care who else on your network can
-drive the printer...
+No QIDI cloud needed for this. Orca talks straight to Moonraker.
+
+In Orca, edit the printer and open the physical-printer / connection dialog.
+Then:
+
+- **Host Type:** `Moonraker (Klipper)`. It's at the bottom of the list. There's
+  also an `Octo/Klipper` option that works via Moonraker's OctoPrint shim, but
+  native Moonraker is the fuller one.
+- **Hostname, IP or URL:** just the printer's IP, e.g. `192.168.8.xxx`. No port.
+  The stock image runs an nginx on port 80 that proxies the Moonraker API, so the
+  bare IP is enough.
+- **Device UI:** `http://<printer-ip>` if you want the "open web UI" button to
+  land on Fluidd. Optional.
+- **API Key / Password:** leave it blank. On the stock image Moonraker trusts the
+  whole LAN with no key (`login_required: false`, and the trusted_clients list
+  covers the private ranges). Handy, and also worth a thought: anyone on your
+  network can drive the printer. Fine at home, maybe less fine on a shared or
+  office network.
+
+Hit Test. Green? Good.
+
+### macOS gotcha
+
+If you're on macOS Sequoia or newer (I'm on 26.x): the **first** Test will fail,
+and at the same moment macOS pops its "OrcaSlicer wants to find devices on your
+local network" prompt. That's the actual reason it failed - the request never
+left the machine. Grant it, hit Test again, connected. If you dismissed the
+prompt, it's under System Settings, Privacy & Security, Local Network. Cost me a
+confused minute before the penny dropped...
