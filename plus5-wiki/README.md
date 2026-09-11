@@ -28,6 +28,11 @@ What LAN mode actually does under the hood, and how to shut the cloud tunnel off
 properly. The Plus 5 uses `frp` now, not the Plus 4's `udp_server`, so the disable
 steps are different.
 
+### [Getting the QIDI Box to print the right colour from OrcaSlicer](./content/qidi-box-colour-mapping/README.md)
+Out of the box it loads the wrong slot every time. Why (a stale `value_t0`
+variable Orca never writes), and the four-line start-gcode fix that makes colour
+selection actually work.
+
 ---
 
 *All of this started from poking at one X-Plus 5 read-only over SSH. Verified vs
