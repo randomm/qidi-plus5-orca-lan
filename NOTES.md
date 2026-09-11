@@ -666,6 +666,21 @@ app can reach the printer from outside your LAN. Only port 80 is tunnelled
   state was ambiguous when queried. Confirming would require rebooting the
   printer (not done — would be disruptive). [UNCONFIRMED]
 
+### Refinement (verified after first draft): LAN mode looks like it *is* `systemctl disable`
+
+The real unit is **`frpc.service`** (`Description=QIDILink Client Service`,
+`ExecStart=/root/Frp/frpc -c /root/Frp/frpc.json`). `frp.service` is a broken
+self-referential symlink (`-> /etc/systemd/system/frp.service`) — ignore it.
+
+`systemctl list-unit-files` reports `frpc.service` as **`disabled`** right now,
+even though `frpc.log` shows it connected at boot this morning. The most likely
+explanation: the printer's **LAN switch runs `systemctl disable --now
+frpc.service`**. If so, LAN mode is persistent by definition — a `disabled` unit
+does not start at boot. So the manual disable below is **belt-and-suspenders**,
+not strictly necessary while LAN mode stays on. Residual risk: a firmware/OTA
+update could re-enable or re-create the unit. [VERIFIED unit is currently
+disabled + inactive; LAN-switch→disable mapping INFERRED, not watched live]
+
 ### Two ways to keep it off
 
 **A. The LAN switch (what you did).** Non-invasive, reversible from the UI, no
@@ -678,15 +693,15 @@ shell needed. Stops the running tunnel. Reboot-persistence unverified — treat 
 ```sh
 ssh qidi@<PRINTER-IP>          # password: qiditech
 # stop now and prevent auto-start at boot:
-echo qiditech | sudo -S systemctl disable --now frp.service frpc.service
+echo qiditech | sudo -S systemctl disable --now frpc.service
 # verify:
-systemctl is-active frp.service frpc.service      # -> inactive
-systemctl is-enabled frp.service frpc.service     # -> disabled/masked
+systemctl is-active frpc.service      # -> inactive
+systemctl is-enabled frpc.service     # -> disabled/masked
 ```
 
 To fully neutralise even a manual/firmware re-enable, additionally `mask` it:
 ```sh
-echo qiditech | sudo -S systemctl mask frp.service frpc.service
+echo qiditech | sudo -S systemctl mask frpc.service
 ```
 Reverse with `systemctl unmask` / `enable --now` if you ever want QIDI remote
 access back.
