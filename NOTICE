@@ -1,0 +1,22 @@
+QIDI X-Plus 5 — OrcaSlicer + LAN-only notes
+Copyright 2026 the repository author
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+------------------------------------------------------------------------
+Scope of this license
+------------------------------------------------------------------------
+The Apache-2.0 license covers ONLY the original content of this
+repository: the flatten.py tool and the notes/write-up authored here.
+
+This repository does NOT contain or redistribute, and the license does
+NOT extend to:
+
+  * QIDI's slicer profiles, G-code, firmware, or Klipper macros
+    (property of Shenzhen QIDI Technology Co., Ltd.)
+  * OrcaSlicer's profile data or source
+    (the OrcaSlicer project, GPL-3.0)
+
+Those remain the property of their respective owners under their own
+licenses. Any values referenced in the notes are cited as facts for
+interoperability and are not a redistribution of the underlying works.

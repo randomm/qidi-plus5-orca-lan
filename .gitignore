@@ -1,0 +1,20 @@
+# --- Not shareable: kept on disk locally, never committed ---
+
+# QIDI's copyrighted shipped profile bundle (verbatim copy for local diffing)
+qidistudio-source/
+
+# This printer's live config: contains MCU serial numbers, network identifiers,
+# and QIDI's proprietary Klipper macros. Private machine data — do not publish.
+printer-cfg-backup/
+
+# Cached copy of OrcaSlicer's GPL profiles (re-fetchable from upstream)
+upstream-orca/
+
+# Derived from QIDI profiles; embed QIDI's verbatim G-code. Kept local.
+flattened/
+gcode/
+
+# Build/scratch
+__pycache__/
+*.pyc
+*.dmg
