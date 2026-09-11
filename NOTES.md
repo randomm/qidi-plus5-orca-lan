@@ -339,6 +339,17 @@ reproduce work already done to a higher standard than a manual port (upstream
 fixed the setting_id collision and did the schema rename correctly).
 Nothing was written to `orca-profiles/`.
 
+**Installed:** OrcaSlicer **2.5.0-dev** (nightly, macOS universal) to
+`/Applications/OrcaSlicer.app` on 2026-09-11. This build packs vendor profiles
+into an encrypted container `profiles/Qidi.opc` (magic `ZCRO`) rather than loose
+JSON, so the presets aren't browsable on disk — but the build ships the Plus 5's
+own assets (`Qidi X-Plus 5_cover.png`, `qidi_xplus5_buildplate_model.stl`,
+`qidi_xplus5_buildplate_texture.svg`), which only ship with the Plus 5 machine
+model that references them. Confirm in-app: Printer picker -> add -> QIDI ->
+X-Plus 5 (0.2/0.4/0.6/0.8 nozzle). Your existing QIDIStudio install and Orca
+config were left untouched. [VERIFIED install; in-app presence VERIFIED via
+bundled assets]
+
 **Recommended action instead:** install the **nightly** build, or copy the 21
 machine/process files from `main` into a v2.4.2 install's
 `resources/profiles/Qidi/` + patch `Qidi.json`. Nightly is cleaner. *Not done —
