@@ -65,8 +65,16 @@ numbers (which the AMS sync already reports), not to which tube goes where.
 
 Paint the model by filament and it comes out in the matching physical colour.
 Single colour white? Paint the whole thing with filament 2. Multi-colour? Paint
-with 1/2/3 however you like. The colours now come from Orca, which is the whole
+with 1/2/3/4 however you like. The colours now come from Orca, which is the whole
 point.
+
+Does it actually work? Yes, tested it. Painted a cube with filament 4 (orange),
+sliced, printed - the printer loaded slot 3 and out came orange. Painted another
+with filament 2 (white) - loaded slot 1, white. Slot 3 is a slot the old bug never
+touched, so that one's a proper confirmation, not luck. One gotcha to keep in your
+head: the filament *number* picks the slot, not the colour swatch. Recolouring a
+chip does nothing to the physical slot - repaint the region onto the filament
+number whose slot you actually want.
 
 > Heads up: this only works if your filament list order matches the physical slot
 > order. Swap a spool, reorder the list to match. And it won't repaint a print

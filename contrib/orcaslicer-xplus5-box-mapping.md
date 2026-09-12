@@ -121,14 +121,31 @@ it entirely in the C++ agent layer.
 
 ## Tests
 
-TODO (fill after Phase B hardware verification):
-- [ ] Single-colour: model painted with the white filament → sliced gcode expands to
-      `BOX_PRINT_START EXTRUDER=<white tool>` and the four `SAVE_VARIABLE` lines; print loads
-      the white slot (confirmed via Moonraker `slot_sync`).
-- [ ] Two-colour: sliced gcode shows `T0`/`T1` tool changes; print loads both correct slots.
-- [ ] `value_t{n}` persists as identity after the print (the closed `BOX_PRINT_START` does not
-      overwrite it).
-- [ ] `scripts/check_profile.sh` (whole tree) — all five checks green.
+Verified on a real QIDI X-Plus 5 + QIDI Box (4 slots: 0 red, 1 white, 2 black, 3 orange),
+OrcaSlicer 2.5.0-dev, Moonraker (Klipper) LAN connection. The mapping was applied as a
+user-preset `machine_start_gcode` override (identical content to this PR's profile edit) and
+each slice inspected + printed:
+
+- [x] **Single-colour, filament 2 (white):** sliced gcode contained the four `SAVE_VARIABLE`
+      lines and `BOX_PRINT_START EXTRUDER=1`; the print loaded slot 1 (Moonraker
+      `slot_sync=slot1`, `last_load_slot=slot1`) and printed white.
+- [x] **Single-colour, filament 4 (orange):** gcode `BOX_PRINT_START EXTRUDER=3`; print loaded
+      slot 3 (`slot_sync=slot3`) and printed orange. Slot 3 is neither the macro default nor the
+      stale slot the bug fell back to (slot 2), so this is a decisive arbitrary-slot result.
+- [x] **Mapping persists:** after the prints, `value_t0..t3` read `slot0..slot3` (identity) —
+      the closed `BOX_PRINT_START` does not overwrite them.
+- [x] `scripts/check_profile.sh -v Qidi` — **all five checks PASS locally** with the patch
+      (extra_json_check, validate_system, validate_slice, validate_filament_subtypes,
+      validate_custom; diff = 2 files, 2 insertions, 2 deletions). Re-run whole-tree before
+      final submission.
+- [ ] Full multi-colour print with mid-print `T0→T1` changes not run at time of writing. The
+      per-tool lookup is identical for tool changes (each `TN` reads `value_t{n}`), and two
+      distinct tools (T1, T3) were verified individually, so it is expected to work; noting it
+      honestly as not-yet-exercised end-to-end.
+
+Confirms: OrcaSlicer's filament number → tool index → `value_t{n}` → physical slot, once the
+identity mapping is written. Painting the plate with filament 2 emits `T1`, filament 4 emits
+`T3`, etc.
 
 ## Compliance checklist (AGENTS.md; no CONTRIBUTING/CoC/DCO/CLA exist)
 

@@ -19,6 +19,11 @@ and OrcaSlicer `main` in September 2026.
   is local.
 - **SSH default for this generation is `qidi` / `qiditech`** (the older
   `mks` / `makerbase` no longer works on the X-5/Q2/Max-4 generation).
+- **The QIDI Box loads the wrong colour by default** over OrcaSlicer/Moonraker:
+  Orca imports the box colours but never writes the tool→slot mapping, so prints
+  use a stale slot. A four-line `SAVE_VARIABLE` identity map in the machine start
+  G-code fixes it (verified on hardware); a matching OrcaSlicer profile PR is
+  prepared in `contrib/`. See the box-colour wiki page.
 
 ## What's here
 

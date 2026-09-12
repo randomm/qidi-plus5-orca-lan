@@ -737,3 +737,72 @@ failed *and* triggered the macOS "OrcaSlicer wants to find devices on your local
 network" prompt simultaneously — the request never left the machine. After
 granting, the **second** Test connected. If the prompt is dismissed, re-enable at
 System Settings → Privacy & Security → Local Network → OrcaSlicer. [VERIFIED on this host]
+
+---
+
+## Phase 5 — QIDI Box colour mapping in OrcaSlicer (root cause + verified fix)
+
+Goal: pick a colour in OrcaSlicer and have the QIDI Box load that colour, over the
+LAN/Moonraker connection (no QIDI cloud).
+
+### Symptom
+Every print loaded the wrong box slot; the colour chosen in Orca had no effect. On this
+unit everything came out of slot 2 (black) regardless. [VERIFIED]
+
+### Root cause [VERIFIED on-device]
+The box resolves tool→slot from a Klipper saved variable `value_t{n}`. The `T0`..`T15`
+macros (`printer-cfg-backup/box.cfg`) read `value_t{n}|default('slot{n}')` and call
+`EXTRUDER_LOAD SLOT={slot}`. So the macros' **native default is already identity**
+(`value_t0`→`slot0`, ...). Two facts combine into the bug:
+1. Something wrote `value_t0='slot2'` and it persisted as stale state (`saved_variables.cfg`).
+   `BOX_PRINT_START`/`EXTRUDER_LOAD` live in a closed `.so` (`[multi_color_controller]`), so
+   what wrote it isn't inspectable, but the value survives untouched across prints.
+2. **OrcaSlicer never writes `value_t{n}`.** Its Moonraker path (`QidiPrinterAgent.cpp`) is a
+   read-only sync: it reads `color_slot{n}` to import the colours (they arrive correctly, in
+   slot order — a slice showed `filament_colour=#FF362D;#FAFAFA;#060606` = red;white;black),
+   but it never writes the tool→slot mapping back. Orca's own AMS-sync tooltip says it:
+   *"Filament type and color information have been synchronized, but slot information is not
+   included."* [VERIFIED]
+
+So `BOX_PRINT_START EXTRUDER=0` resolved through the stale `value_t0`. The colour swatch in
+Orca is cosmetic to the physical slot; the filament **index** (tool number) is what selects
+the slot.
+
+The slot is the box's **electronic** address — each slot has its own motor + RFID, and the
+box tells the four-into-one combiner which slot feeds. It is not a physical tube position;
+tubes can be plugged in any order. [VERIFIED — user-confirmed against QIDI's own docs]
+
+### Fix (verified working)
+Prepend an identity reset of the mapping to Orca's `machine_start_gcode` (runs before
+`BOX_PRINT_START`), restoring the box macros' own defaults every print:
+```
+SAVE_VARIABLE VARIABLE=value_t0 VALUE="'slot0'"
+SAVE_VARIABLE VARIABLE=value_t1 VALUE="'slot1'"
+SAVE_VARIABLE VARIABLE=value_t2 VALUE="'slot2'"
+SAVE_VARIABLE VARIABLE=value_t3 VALUE="'slot3'"
+```
+Then tool N → slot N, and Orca's filament list (in slot order, as the AMS sync imports it)
+drives the physical colour: paint a region with filament number N → box slot N.
+
+### Verified on hardware [VERIFIED]
+Box slots: 0 red, 1 white, 2 black, 3 orange.
+- Filament 2 (white) → sliced `BOX_PRINT_START EXTRUDER=1`, all four `SAVE_VARIABLE` lines
+  present → print loaded `slot_sync=slot1` → white.
+- Filament 4 (orange) → `BOX_PRINT_START EXTRUDER=3` → loaded `slot_sync=slot3` → orange.
+  Slot 3 is neither the default nor the stale slot, so this is decisive.
+- After the prints `value_t0..t3` = `slot0..slot3` (identity holds; the closed
+  `BOX_PRINT_START` does not overwrite them).
+- Not exercised: a full multi-colour print with mid-print `T0→T1` changes. Per-tool lookup is
+  identical for tool changes and two distinct tools were verified individually, so it is
+  expected to work; recorded honestly as not-yet-run end-to-end.
+
+### Upstream status [VERIFIED via GitHub]
+- #11671 (Qidi box support) and #13236 (Moonraker AMS colour-sync) are **both closed/fixed**.
+  They added the *read* side (`QidiPrinterAgent.cpp`, PR #12086) and fixed an earlier
+  `Slot-1` hyphen bug (current nightly emits no hyphenated tokens). #13202 is the only open
+  box PR (C++). The remaining gap is the mapping **write-back**.
+- Contribution prepared: a bug issue + a minimal **profile PR** (prepend the four
+  `SAVE_VARIABLE` lines to the X-Plus 5 `machine_start_gcode`, bump `Qidi.json` version).
+  The one-line profile edit + version bump **pass `scripts/check_profile.sh` locally** (all 5
+  checks). Drafts in `contrib/`; submission gated on the user. AI-authored (Claude),
+  hardware-tested by the repo owner; disclosed in the issue/PR body + `Co-authored-by` trailer.
