@@ -80,17 +80,54 @@ number whose slot you actually want.
 > order. Swap a spool, reorder the list to match. And it won't repaint a print
 > that's already running - a single-colour job loads once at the start.
 
+## The trade-off (read this before you commit to it)
+
+There's a catch, and it's a good one - raised by thelegendtubaguy on the OrcaSlicer
+PR, and he's right. The box keeps that `value_t{n}` mapping on purpose. Two cases
+where that matters:
+
+- **Runout / auto-feed:** if a slot runs dry mid-print, the box can switch that tool
+  to another slot holding the same filament and rewrite `value_t{n}`, so you carry on
+  (or reprint) without reslicing. Handy.
+- **Manual remap:** you can deliberately point a tool at a different slot from the
+  printer screen.
+
+The four-line reset stamps identity back over both, at the start of every print. So
+if you lean on runout-resume, or you like remapping slots by hand, this workaround
+will fight you. If you (like me) just load your colours in slot order and drive
+colour from Orca, it's exactly what you want.
+
+That's why it lives in your **personal** printer preset, not in the shared OrcaSlicer
+profile: it's a personal policy, not a universal fix.
+
+### How to undo it
+Delete the four `SAVE_VARIABLE` lines from Machine start G-code and save. The box
+goes back to managing `value_t{n}` itself (and you're back to picking the slot on
+the printer before you print).
+
+### How to check it's working
+Slice, then look at the gcode (or query the printer read-only):
+```
+curl "http://<printer-ip>:7125/printer/objects/query?save_variables" | grep value_t
+```
+During/after a print, `value_t{n}` should read `slot{n}`, and Moonraker's
+`slot_sync` shows the slot actually loaded.
+
 ## Is it a hack?
 
-A bit, yeah. Four lines in your start gcode isn't how it should be. The real fix
-belongs upstream in OrcaSlicer: write the `value_t{n}` mapping (or call QIDI's own
-`MULTI_COLOR_INIT_MAPPING` command, which the Plus 5 does have) so this just works
-with no start-gcode edits.
+Yeah. Four lines in your start gcode isn't how it should be. The real fix belongs
+upstream in OrcaSlicer's `QidiPrinterAgent`: it already *reads* the box and imports
+the colours, it just never *writes* the tool->slot mapping back. If it wrote the
+mapping you actually picked in the AMS dialog for that slice, you'd get the right
+colours with no start-gcode edits - and it would respect runout/manual remaps
+instead of stamping over them.
 
-The upstream state, for the record: the box issues everyone points at (#11671 and
-[#13236](https://github.com/OrcaSlicer/OrcaSlicer/issues/13236)) are both closed and
-fixed. What they fixed is the *read* side - Orca's `QidiPrinterAgent` now reads the
-box and imports the colours. What's still missing is the *write* side: it never
-sends the tool->slot mapping back. That's the gap these four lines paper over, and
-it's what a profile PR (or a proper fix in the C++ agent) should close. Until then,
-the four lines get you printing the colours you actually asked for...
+Upstream state, for the record: the box issues everyone cites (#11671 and
+[#13236](https://github.com/OrcaSlicer/OrcaSlicer/issues/13236)) are both closed -
+they fixed the *read* side. The *write* side is the remaining gap. I proposed a
+profile-level version of this fix as OrcaSlicer
+[PR #15663](https://github.com/OrcaSlicer/OrcaSlicer/pull/15663) but withdrew it
+after the runout/remap feedback above: forcing a mapping in the *shared* profile is
+the wrong layer. The write-back belongs in the C++ agent, per-slice, from your AMS
+selection. Until that exists, the four lines get you printing the colours you asked
+for - as a personal choice, with the trade-off above.

@@ -806,3 +806,30 @@ Box slots: 0 red, 1 white, 2 black, 3 orange.
   The one-line profile edit + version bump **pass `scripts/check_profile.sh` locally** (all 5
   checks). Drafts in `contrib/`; submission gated on the user. AI-authored (Claude),
   hardware-tested by the repo owner; disclosed in the issue/PR body + `Co-authored-by` trailer.
+
+### PR outcome + community feedback (2026-09-13)
+
+Opened OrcaSlicer PR #15663 (profile-level identity reset). CI `Check profiles`
+**passed** (all 5 checks). But **thelegendtubaguy** (author of the original
+"Add the Qidi Plus 5" PR #15163) raised a valid objection, and we conceded:
+
+- The box persists `value_t{n}` **by design**. On **runout/auto-feed**, if a slot
+  runs dry the box remaps that tool to another slot with the same filament and
+  rewrites `value_t{n}`, so you can resume/reprint without reslicing. Users can
+  also **manually remap** a tool→slot from the screen.
+- A blanket identity reset in the **shared** profile clobbers both on every print.
+  "This is a personal choice that shouldn't be influenced by the slicer" — applies
+  to Plus 5, Max 4, Q2/Q2C, Plus 4.
+
+**Assessment: he's right.** Our "stale `value_t0=slot2`" was partly the box working
+as designed (persistent mapping), not pure garbage. The identity reset is the wrong
+layer for a shared profile. **PR #15663 to be closed/withdrawn.**
+
+**Resolution:**
+- Keep the four `SAVE_VARIABLE` lines as a **personal preset** choice on this
+  machine (we load colours in slot order and don't rely on runout-resume). The
+  trade-off is documented in `plus5-wiki/content/qidi-box-colour-mapping/`.
+- The correct upstream fix stays: OrcaSlicer's `QidiPrinterAgent` (which already
+  *reads* the box) should *write* the tool→slot mapping the user selected in the
+  AMS dialog **per slice** — respecting runout/manual remaps — instead of a
+  hardcoded identity in the profile. That's a C++ change, offered to help with.

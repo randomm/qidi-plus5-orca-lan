@@ -1,5 +1,14 @@
 # OrcaSlicer contribution — QIDI X-Plus 5: box tool→slot mapping is never written, so the box loads a stale slot
 
+> **OUTCOME (2026-09-13):** The profile PR (#15663) was opened and passed CI, then
+> **withdrawn** after maintainer-community feedback (thelegendtubaguy): the box
+> persists `value_t{n}` by design (runout/auto-feed remap + manual remap), so a
+> blanket identity reset in the *shared* profile is the wrong layer. Kept as a
+> **personal-preset** workaround on our machine; the correct upstream fix is for
+> `QidiPrinterAgent` to *write* the user's AMS-chosen mapping per slice (it already
+> reads the box). This doc is retained for the analysis + as the basis for that
+> C++-agent argument.
+>
 > Working source for (1) a GitHub **bug issue** and (2) a minimal **profile PR** to
 > github.com/OrcaSlicer/OrcaSlicer. Neutral technical register. Per-unit identifiers
 > (IP, serials) are placeholders.
