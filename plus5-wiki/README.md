@@ -35,6 +35,25 @@ selection actually work.
 
 ---
 
+## Printing well, and not wrecking things
+
+### [The 15 mm band at the edge of the bed that will eat your print](./content/bed-mesh-vs-printable-area/README.md)
+Orca thinks the bed is 320x320. The printer only probes to 305x305. Parts placed in
+between get printed on bed height nobody measured. Cost me a print and 6.35 mm of
+gantry tilt.
+
+### [Things in the stock profile worth knowing before you tune](./content/print-quality-tuning/README.md)
+Inner walls silently running at 10000 mm/s2, a volumetric cap that makes the speed
+tiers meaningless, a flow ratio that is a blanket default for every material, and
+the corner test that tells you which defect you are looking at.
+
+### [The QIDI Box does not vent itself](./content/qidi-box-drying/README.md)
+Mine sat at 43% RH for days doing nothing. Why a sealed box is bad at drying, why
+PLA is locked out of both drying modes, why the heater elements hit 85 C, and how
+to drive it from the console when Fluidd refuses.
+
+---
+
 *All of this started from poking at one X-Plus 5 read-only over SSH. Verified vs
 inferred is called out where it matters. Corrections and additions very welcome -
 that's the whole point of a community wiki...*

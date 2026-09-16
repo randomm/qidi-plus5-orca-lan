@@ -27,6 +27,32 @@ and OrcaSlicer `main` in September 2026.
   choice, not for the shared profile (an OrcaSlicer profile PR was proposed and
   withdrawn on that basis). The real fix belongs in Orca's `QidiPrinterAgent`. See
   the box-colour wiki page.
+- **Two things in the stock profile will bite you.** Orca's printable area
+  (320x320) is larger than the printer's probed bed mesh (305x305), so parts
+  placed in that 15 mm band print on *extrapolated* bed height - that cost one
+  print and left the gantry 6.35 mm out of level, and Moonraker still logged the
+  job as `completed`. And `inner_wall_acceleration: 0` silently inherits
+  `default_acceleration` = 10000 mm/s2 on a machine whose measured Y resonance is
+  36.2 Hz. Both are profile-level, not unit-specific.
+- **The stock flow ratio is a blanket default, and it over-extrudes.**
+  `filament_flow_ratio: 0.98` is set on `fdm_filament_common`, the base every
+  material inherits - it is not a PLA value and not a measured one. Calibrated
+  on this unit: **0.94**, i.e. 4% too much material in every line, which is the
+  classic cause of pronounced layer lines. Calibrate flow *before* pressure
+  advance: PA measured against wrong flow is wrong. (QIDI's docs put direct-drive
+  PA near the low end of 0.050-1.000, which made the shipped 0.034 look too low -
+  but measured on this machine the usable top is ~0.04, so 0.034 was fine. That
+  hypothesis is recorded as tested and wrong.) See the print-quality wiki page.
+
+- **The QIDI Box is a sealed box, which makes it good at storage and bad at
+  drying.** QIDI's own wiki tells you to open the rear vent by hand during a cycle,
+  and the measurement backs it: heating a loaded box moved 1.6x more water into the
+  box air, which would have gone straight back into the filament on cooldown (69% RH
+  projected, from a 43% start). PLA is additionally locked out of both drying modes,
+  because the spool does not rotate and the heater elements reach 85.8 C against a
+  40 C air setpoint. And `heater_box1` cannot be set from Fluidd at all: it has no
+  config section, being created at runtime by QIDI's closed box module. See the
+  box-drying wiki page.
 
 ## What's here
 
@@ -34,6 +60,9 @@ and OrcaSlicer `main` in September 2026.
   the upstream comparison, and the read-only printer recon (LAN/cloud, SSH,
   closed `.so` modules, QIDILink tunnel + how to disable it). Findings are
   tagged `[VERIFIED]` / `[READ]` / `[UNCONFIRMED]`.
+- **`plus5-wiki/`** — community-wiki pages written for other Plus 5 owners:
+  SSH access, OrcaSlicer profiles, LAN mode + the QIDILink tunnel, QIDI Box
+  colour mapping, the bed-mesh/printable-area trap, and stock-profile tuning.
 - **`tools/flatten.py`** — resolves QIDIStudio/Orca `inherits` chains into a
   flattened effective config. Usage: `flatten.py <bundle-dir> <preset-name>`.
 

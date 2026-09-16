@@ -833,3 +833,365 @@ layer for a shared profile. **PR #15663 to be closed/withdrawn.**
   *reads* the box) should *write* the tool→slot mapping the user selected in the
   AMS dialog **per slice** — respecting runout/manual remaps — instead of a
   hardcoded identity in the profile. That's a C++ change, offered to help with.
+
+---
+
+## Phase 6 — print quality investigation (2026-09-15)
+
+Complaint: distinct layer lines and slightly uneven vertical walls on large prints.
+Preset chain throughout: `0.20mm Standard @X-Plus 5` + `Generic PLA @Qidi X-Plus 5 0.4
+nozzle`, 0.2 mm layers, OrcaSlicer 2.5.0-dev. Evidence came from the printed jobs'
+own `.gcode.3mf` pulled back off the printer, `klippy.log`, and Moonraker history
+(open + unauthenticated on the LAN, see 4.3).
+
+### 6.1 Bed mesh area is smaller than the printable area [VERIFIED]
+
+`printable_area` = `0x0, 320x0, 320x320, 0x320` (Orca machine profile).
+`[bed_mesh] mesh_min: 15,15 / mesh_max: 305,305` (`printer.cfg`).
+
+A 15 mm strip along every edge is printable but never probed. Klipper extrapolates
+the mesh outward rather than refusing, and Orca gives no warning when a part is
+placed there.
+
+The bed is measurably non-flat in Y: from one print's mesh, row Y=111.7 ≈ -0.05 mm,
+Y=160 ≈ +0.01, Y=208.3 ≈ +0.11, i.e. ~0.16 mm rise per 97 mm. Extrapolation to
+Y=311 is therefore a ~0.17 mm guess.
+
+**Consequence, observed.** `Catapult.gcode.3mf` (09-13 21:10 → 09-14 01:26) placed
+five rocks spanning Y 283.1–311.6 and the catapult body to X 317.7. Per-object
+bounding boxes extracted from the sliced G-code:
+
+| Object | X range | Y range |
+|---|---|---|
+| Catapult | 82.2–317.7 | 41.3–278.8 |
+| Rock ×5 | 120.6–314.1 | 283.1–311.6 |
+
+Result: physical failure (part detached, spaghetti), while Moonraker logged the job
+as **`completed`** — the G-code ran to the end extruding into air.
+
+### 6.2 A physically failed print is indistinguishable from a successful one [VERIFIED]
+
+There is no failure detection in this stack. The catapult job shows
+`status: completed`, full `print_duration`, full `filament_used`. Nothing in
+Moonraker history or `klippy.log` flags it. Worth knowing before trusting an
+overnight print's status.
+
+### 6.3 Collision damage to Z is silent [VERIFIED from config + observed]
+
+Both Z steppers ship `stealthchop_threshold: 9999999999` (`printer.cfg:274`, `:283`)
+= permanent stealthChop: no stall detection, reduced torque headroom. Skipped Z steps
+under collision load produce no error.
+
+Damage surfaced only at the next manual calibration (`klippy.log.2026-09-14`,
+log clock runs 3 h behind local):
+
+```
+2026-09-14 08:12:06 | Retries: 0/4 Probed points range: 6.346719 tolerance: 0.050000
+2026-09-14 08:12:22 | Retries: 1/4 Probed points range: 0.224219 tolerance: 0.050000
+2026-09-14 08:12:36 | Retries: 2/4 Probed points range: 0.010234 tolerance: 0.050000
+```
+
+**6.35 mm out of level** (~1.25° across the bed), 127× tolerance. `Z_TILT_ADJUST`
+recovered it correctly in three passes — the compensation works; it just only runs
+at print start.
+
+### 6.4 `inner_wall_acceleration: 0` silently inherits 10000 [VERIFIED]
+
+QIDI's process profiles ship `inner_wall_acceleration: 0`, which in Orca means
+"inherit `default_acceleration`" = **10000 mm/s²**. `outer_wall_acceleration` is
+5000. Since the outer wall is extruded onto the inner wall, the visible surface is
+laid onto a substrate printed at double the acceleration.
+
+Measured machine limits on this unit (`SAVE_CONFIG`): `shaper_type_x = ei @ 54.4 Hz`,
+`shaper_type_y = mzv @ 36.2 Hz`. Smoothing scales as accel/freq², so the Y axis
+tolerates ≈ (36.2/54.4)² ≈ 44% of X's acceleration. `printer.cfg:149` allows
+`max_accel: 20000`.
+
+**Change applied and verified on hardware:** outer wall 5000→2500, inner wall
+0→3000, normal printing 10000→6000. Flat walls visibly improved on the next print;
+corners unchanged. [VERIFIED — before/after parts]
+
+### 6.5 `filament_max_volumetric_speed = 14` governs every feature speed [VERIFIED]
+
+Orca models the bead as a rectangle with semicircular ends:
+`area = h(w−h) + π(h/2)²`. For 0.42 × 0.2: `0.0754 mm²`, so `14 / 0.0754 =`
+**185.64 mm/s** ceiling.
+
+| Feature | Profile | Effective |
+|---|---|---|
+| Outer wall | 200 | ~186 |
+| Inner wall | 300 | 172 (0.45 width) |
+| Solid infill | 250 | ~186 |
+| Sparse infill | 350 | 172 |
+
+The profile's speed hierarchy does not exist in practice. Orca's own UI shows
+`185.6372` for this configuration, which is this arithmetic to four decimals.
+
+### 6.6 Flow ratio 0.98 is a common-base default; measured 0.94 [VERIFIED]
+
+`filament_flow_ratio: 0.98` is set on **`fdm_filament_common`** — the base inherited
+by every material (ABS, PETG, PLA, TPU). Neither `Generic PLA` nor the nozzle variant
+overrides it. It is not a PLA-specific or measured value.
+
+Measured via Orca `Calibration → Flow rate → YOLO (Recommended)`: **0.94** on this
+spool, i.e. the stock profile over-extrudes by ~4%.
+
+Reading the YOLO test: objects inside `Orca-LinearFlow.3mf` are named `flowrate_0`,
+`flowrate_0.01`…`flowrate_0.05`, `flowrate_m0.01`…`flowrate_m0.05` (m = minus), so the
+labels are **absolute offsets** to flow ratio, range ±0.05 step 0.01:
+`new = current + offset`. Observed: over-extrusion ridges visible from −0.02 upward,
+smooth plateau −0.03 to −0.05 → transition just under 0.95, took −0.04 for margin.
+
+**This is the best explanation for the original banding complaint.** A constant ~4%
+excess widens every bead so each layer bulges past the one below — a constant error,
+which is precisely why nothing in the G-code or the logs varied (see 6.9).
+
+### 6.6b Pressure advance — QIDI's stated floor did NOT hold here [VERIFIED by test]
+
+Stock `pressure_advance: 0.034`. QIDI's published guidance puts direct-drive machines
+near the low end of Klipper's typical **0.050–1.000** range, which suggests 0.034 is
+too low.
+
+**Measured and disproved on this unit.** PA Pattern (0→0.10, step 0.005, DDE), run
+*after* flow was corrected to 0.94: everything ≤0.04 good; above 0.04 corners begin
+separating (the too-high signature). Usable top ≈ **0.04**; shipped 0.034 was already
+close to correct.
+
+Recorded as a **corrected earlier hypothesis**: the "below vendor's own floor" reading
+in an earlier draft of this phase was wrong. Over-extrusion, not low PA, produced the
+corner blobs.
+
+**Method notes.** PA Pattern step 0.002 over 0–0.10 yields 51 patterns, too cramped to
+read; 0.005 → 21 is legible. PA **Tower** is unsuitable for a fine sweep: it advances
+PA every 5 mm of height (`PA = k_start + floor(height/5) × k_step`, per QIDI's wiki), so
+0–0.10 at 0.002 = 50 bands = **250 mm** of tall thin tower, and it greys out "Print
+numbers" (height must be measured and converted by hand).
+
+### 6.6c The 3-blobby-1-clean corner signature [VERIFIED; interpretation corrected]
+
+Observed: three of four vertical corners blobby, the fourth clean.
+
+Mechanism for the outlier: `retract_when_changing_layer: 1` + 0.4 mm Z hop relieves
+melt-zone pressure at the seam corner, so it escapes the defect.
+
+**Correction to the earlier reading:** over-extrusion and low PA produce nearly
+identical corner blobs, and the seam-corner retract masks both identically. The 3+1
+pattern therefore establishes *extrusion-side rather than mechanical*, but does **not**
+discriminate flow from PA. Here it was flow.
+
+Retained as a discriminator:
+- 3 blobby + 1 clean, or 4 blobby → extrusion side; calibrate **flow first**, then PA.
+- Rounded/thinned, corners separating → PA too high.
+- Ripples decaying away from the corner → ringing; input shaping / belt tension.
+
+The clean corner remains a valid control sample: it proves the machine can produce a
+sharp corner, ruling out mechanics.
+
+### 6.7 Chamber and cooling are already at their limits [VERIFIED — measured]
+
+From `klippy.log` across full prints, PLA, bed 60 °C:
+
+| | chamber |
+|---|---|
+| Door closed, 5+ h | **39.0 °C** (flat, 39.0–39.4) |
+| Door open, 62 min | **31.6 °C** (30.8–32.8) |
+
+Exhaust fan was already commanded to 100% for the entire print (`M106 P3 S255` in
+start G-code; only `M106 P3 S0` at end). Part fan and auxiliary fan likewise 100%
+from layer 2. Orca's `temperature_vitrification` for Generic PLA is 45 °C.
+
+So the slicer has no cooling headroom left; the door is the only remaining lever.
+Note the direction: a colder chamber makes layer lines **more** distinct, not less.
+
+### 6.8 Long layer times + unmodulated fan drive layer-line definition [VERIFIED]
+
+`fdm_filament_common.json` ships `fan_min_speed = fan_max_speed = 100` — no
+modulation at all. On the 224 × 167 mm parts, measured layer time was **42–48 s**.
+Each layer is fully cold before the next lands.
+
+`slow_down_layer_time` is 8 s, so on parts of this size the cooling-slowdown path
+never engages and cannot be the cause of banding.
+
+### 6.9 Ruled out for the banding [VERIFIED]
+
+- **The slicer.** For layers 26–187, on a wall whose geometry is unchanged from layer
+  7 to 266, the G-code is behaviourally identical: outer wall flat at 189.4 mm/s,
+  layer time 47–48 s, zero in-layer speed variation. Identical input, banded output.
+- **Hotend PID.** 19 993 in-print samples at target 220 °C: stdev **0.38 °C**,
+  max deviation ±1.7 °C, 0.0% of samples off by >2 °C.
+- **Cooling slowdown.** 8 s threshold vs 42–48 s layers.
+- **Timelapse.** `timelapse_type = 0`. (When enabled it retracts, spiral-lifts, drives
+  to the trash bin and re-primes on *every* layer — worth checking if banding appears.)
+- **Geometry.** Outer wall bounding box constant, layer 7 → 266.
+- **The user machine preset.** Diffed against upstream: only the box-mapping
+  `SAVE_VARIABLE` lines, `host_type`, and the webui URL. Everything else inherited.
+
+### 6.10 Not resolved [UNCONFIRMED]
+
+- **Horizontal banding.** Survives 6.4. If it is the Z leadscrew it must repeat at
+  exactly 4.00 mm (`rotation_distance: 4` → 20 layers at 0.2 mm). Attempted to measure
+  the period by autocorrelating a photo (layer comb resolves at 3.85 px = 0.2 mm, so
+  19.2 px/mm); strongest low-frequency correlation was 0.048, too weak to call.
+  Caliper measurement pending.
+- **Gantry drift between prints.** 0.007 mm at 07:05 → **0.584 mm** at 18:05 the same
+  day, with no crash in between — only a large part levered off the plate. One
+  observation, cause unknown. Z leadscrew couplers not yet inspected.
+- **Fan modulation.** Change to 60/80 not yet tested; the door was opened instead,
+  which pushes the opposite way.
+
+### 6.11 Deliberately not recorded
+
+Flow ratio and pressure advance values are per-spool and per-machine. Publishing this
+unit's numbers as guidance would make other people's prints worse. Same reasoning that
+withdrew PR #15663: a personal-calibration value is not a shared-profile change.
+
+### 6.12 Upstream check [VERIFIED via web search, 2026-09-15]
+
+Essentially no Plus 5-specific defect reporting exists publicly yet — the corpus is
+Plus 4 / Q1 Pro threads plus QIDI's generic troubleshooting blog. No confirmed Plus 5
+firmware or stock-profile bug found, and no owner report matching the corner symptom.
+Also relevant: **QIDI publishes no firmware changelogs** (owners asking have been told
+to contact support), so there is nothing to diff a suspected regression against.
+
+---
+
+## Phase 7 — QIDI Box drying and humidity (2026-09-16)
+
+Trigger: visible stringing on PLA prints. Investigation of the box's drying subsystem
+via Moonraker (read-only) plus QIDI's published wiki.
+
+### 7.1 Box was never drying; RH sat at ambient [VERIFIED]
+
+```
+aht20_f heater_box1        : 25.6 C, 43% RH
+heater_generic heater_box1 : target=0.0  power=0.0
+box_extras.box_drying_state: {"box1": {"dry_state": 0, "end_time": 0}}
+```
+
+`dry_state: 0` / `end_time: 0` = no cycle had ever run. 43% RH ≈ room ambient, i.e.
+the box was providing no passive protection either.
+
+Drying is **on-demand and timed** (hence `end_time`), not continuous and not tied to
+printing.
+
+### 7.2 The box recirculates moisture; venting is manual [VERIFIED — QIDI's own docs + measured]
+
+QIDI's drying wiki instructs closing the top cover to heat, then: *"After an hour or
+two with the heating on, it's good to open the hole at the back of the box for a while
+to let the humidity out, but then you have to keep in mind to close it when the drying
+is finished at the latest."*
+
+Measured on this unit while heating to 38 C with filament loaded, converting RH to
+water-vapour pressure (Magnus, `es = 0.61094·exp(17.625T/(T+243.04))`):
+
+| state | T | RH | vapour |
+|---|---|---|---|
+| before | 25.6 °C | 43% | 1.409 kPa |
+| after ~1 h | 39.7 °C | 31% | **2.250 kPa** |
+
+**Absolute moisture rose 1.60×** — the filament outgassed correctly, but the water
+stayed sealed in. Cooling back to 25.6 °C with that load gives **69% RH**, worse than
+the 43% starting point.
+
+Conclusion: falling RH during a heated cycle is *not* evidence of successful drying in
+a sealed box. Venting is the mechanism, not an optimisation.
+
+Counter-evidence worth recording: a controlled Sunlu S2 comparison found lid-open vs
+lid-closed "within the margin of error" — venting dominates for long cycles and wet
+spools, less for a quick top-up.
+
+### 7.3 PLA is blocked from both drying modes, and why [VERIFIED via QIDI wiki + sensors]
+
+- Drying-while-printing: *"When box recognized PLA filament was placed. You can't use
+  this function."*
+- Manual temperature setting: also disabled with PLA loaded, QIDI's stated reason being
+  that the spool does not rotate and may heat unevenly.
+- The automatic program rotates the tray every 5 min specifically to prevent localized
+  overheating; the fan auto-starts above 35 °C.
+
+Corroborated by this unit's own sensors — the box exposes **three** temperatures:
+
+```
+heater_generic heater_box1        max 40.2 C   (air, the setpoint sensor)
+temperature_sensor heater_temp_a_box1  max 85.8 C   (element)
+temperature_sensor heater_temp_b_box1  max 76.8 C   (element)
+```
+
+Elements reach **85.8 °C** while air holds 40. PLA softens ~60 °C. Without tray
+rotation the only protection is airflow.
+
+**Correction to an earlier assessment in this session:** the raw-heater workaround was
+initially judged "probably fine because it skips the rotation that conflicts with
+feeding". That had the causality backwards — the rotation is thermal protection, and
+skipping it is the risk, not the mitigation.
+
+### 7.4 `heater_box1` is not settable from Fluidd [VERIFIED — root-caused]
+
+Fluidd rejects every non-zero target with "Min or 0". Cause: there is **no
+`[heater_generic heater_box1]` config section**. Klipper's configfile reports only:
+
+```
+mcu mcu_box1, box_config box0, box_extras, box_autofeed
+```
+
+The heater object is created at runtime by `[box_config box0]` (closed
+`multi_color_controller` module), so Fluidd finds no `min_temp`/`max_temp` metadata and
+validation fails for any non-zero value. Same class of problem as the box colour
+mapping (Phase 5): the closed module creates Klipper objects the standard UIs cannot
+introspect.
+
+Console workaround (bypasses UI validation):
+```
+SET_HEATER_TEMPERATURE HEATER="heater_box1" TARGET=40
+SET_HEATER_TEMPERATURE HEATER="heater_box1" TARGET=0
+```
+Both box fans are bound to this heater at `heater_temp 35` in `box.cfg`, so they engage
+automatically. But it is a raw heater set: no timer, no auto-stop, no tray rotation, no
+`box_drying_state` update.
+
+### 7.5 Undocumented drying commands [VERIFIED registered; parameters UNKNOWN]
+
+```
+MULTI_COLOR_DRY    控制材料烘干     (box drying — what the touchscreen calls)
+SET_FILAMENT_DRY   设置耗腔室干燥    (chamber drying)
+PREPARE_FILAMENT_DRY               (macro: G28, Z250, Y320 — parks the toolhead)
+```
+
+`MULTI_COLOR_DRY` and `SET_FILAMENT_DRY` come from the closed `.so`. Nothing in the
+visible config calls them, and a targeted web search found **no public documentation of
+`MULTI_COLOR_DRY` anywhere** (QIDI's own Klipper fork G-Codes.md has no entry). Params
+not established.
+
+### 7.6 Desiccant [VERIFIED via vendor docs + community]
+
+Slots are at the **rear trays**; QIDI sells indicating silica gel refills (4 for ~$5).
+Basket takes 5 g packs, approx 1.75 × 2 in. At least one Plus 4 owner reported the packs
+**missing from the box on delivery**, so presence should be verified rather than assumed.
+
+Stock capacity appears undersized — multiple aftermarket printed large-capacity modules
+exist for this box. Printed replacements should use ABS or similar, since drying cycles
+run to 65 °C.
+
+QIDI guidance: refresh "every few months or as indicated by colour change". Community
+practice for AMS-style boxes: weekly.
+
+### 7.7 Reference RH figures [community-reported]
+
+| condition | RH |
+|---|---|
+| well-maintained new PLA, sealed box | 11–12% |
+| QIDI passive box, desiccant only | ~25% |
+| old spool after 4.5 h @ 50 °C | 21% |
+| **this unit, untouched** | **43%** |
+
+The 4.5 h → 21% figure implies **6–8 h minimum** for neglected filament. Config-side
+temperatures: box drying for PLA = 40 °C
+(`filament_dev_ams_drying_temperature`, deliberately just under the profile's 40 °C
+softening / 45 °C vitrification points); chamber drying per `drying.conf` = bed 70 /
+chamber 55 / **720 min**.
+
+### 7.8 Not resolved
+
+- Whether this unit's desiccant packs are present or spent — physical check pending.
+- `MULTI_COLOR_DRY` parameters — probe once no print is running.
+- Whether idle RH holds below 20% after a proper cycle + fresh desiccant.
