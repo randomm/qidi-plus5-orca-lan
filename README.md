@@ -50,9 +50,13 @@ and OrcaSlicer `main` in September 2026.
   box air, which would have gone straight back into the filament on cooldown (69% RH
   projected, from a 43% start). PLA is additionally locked out of both drying modes,
   because the spool does not rotate and the heater elements reach 85.8 C against a
-  40 C air setpoint. And `heater_box1` cannot be set from Fluidd at all: it has no
-  config section, being created at runtime by QIDI's closed box module. See the
-  box-drying wiki page.
+  40 C air setpoint. Ignoring that block cost me a jam: the filament went soft,
+  **necked** under feeder tension down to well below 1.75 mm, and then would neither
+  feed (no column strength, it buckles) nor retract (too thin for the gears to
+  grip). Recovery needed the PTFE tubes released at both ends and a 3 cm stub worked
+  out of a feed hole by hand. There is no manual release lever on the box feeders.
+  And `heater_box1` cannot be set from Fluidd at all: it has no config section,
+  being created at runtime by QIDI's closed box module. See the box-drying wiki page.
 
 ## What's here
 

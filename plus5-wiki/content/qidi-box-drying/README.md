@@ -94,8 +94,128 @@ heater_temp_b_box1    max 76.8 C
 60. With the spool rotating that averages out. Without rotation, you are relying on
 the fans and on luck.
 
-I did bypass the block (see below) and nothing melted at 38 C for a couple of
-hours. But I would not make it a habit, and now I know why the block is there.
+I did bypass the block, and a day later it cost me a jam and about three hours of
+recovery. See the next section. Do not do this.
+
+## What actually happens if you ignore that block
+
+I ran the box at 38 C for a couple of hours with PLA loaded, using the console
+command below. Nothing melted, the print finished, and I thought that was that.
+
+The next day the black filament would not feed. It would not push forward, and the
+box could only retract it about 15 cm before stalling. Every eject attempt failed
+the same way.
+
+When I finally got the piece out, this is what the end looked like:
+
+```
+     thick        necked      thick      necked        thin
+   =======<<<<<<<=======<<<<<<<<======<<<<<<<<<<<<<<<<<<<
+```
+
+A repeating series of constrictions and bulges, glossy, drawn down well below
+1.75 mm. That is **necking**, and it is what a polymer does when you stretch it
+past its yield point while it is still ductile. It was pulled like taffy.
+
+This matters because it is the opposite of what I expected. I had assumed brittle
+filament snapping. Brittle PLA breaks square and a bit chalky, it does not stretch.
+The filament at the failure point was **soft**, not brittle.
+
+So the mechanism is:
+
+1. The box heats a section of filament sitting near the elements. Remember the air
+   sensor reads 40 C while the elements are at 85 C.
+2. That section goes soft.
+3. The feeder pulls. Instead of moving, the filament stretches and necks down.
+4. Now you have a thin wavy section with no column strength. It **buckles** instead
+   of pushing forward, so it will not feed.
+5. And it is too thin for the gears to grip properly, so it will not retract either.
+
+Both failure directions at once, from one soft section.
+
+The moisture was real too, but it did something different. The part of the spool
+that was never heated had gone brittle from sitting in a 43% RH box, and crumbled
+when I bent it by hand. Two failure modes, two locations, one spool. Do not confuse
+them the way I did.
+
+The Q2 manual says it in one line: **do not feed PLA or PETG while the box is hot.**
+There is also a sticker inside my box saying the same. Believe them.
+
+### Getting it out again
+
+What worked, in order:
+
+1. **Read the sensors first.** `runout_N`, `b_endstop_state`, `e_endstop_state` and
+   the toolhead filament sensor between them tell you which segment the stub is in.
+   In my case all of them read empty, which located the piece in the one stretch
+   with no sensor coverage: the clear tube between the feeder and the toolhead.
+2. **Release the PTFE tubes** at the feeder and at the box. Push-to-connect collets:
+   press the tube *inward* first to unload the collet, then press and hold the
+   collar down and pull. Collar first, always. This is routine maintenance, not
+   disassembly, and it does not require opening anything.
+3. **Push the fragment out of the tube with a fresh straight length of filament.**
+   This is QIDI's own documented technique for pieces you cannot reach.
+4. A ~3 cm stub was left in one slot's feed hole, flush, ungrippable. That came out
+   with patient mechanical persuasion.
+
+Things I looked for and which **do not exist**: there is no manual release lever or
+idler disengage on the box slot feeders. QIDI's toolhead extruder has one and the
+docs tell you to use it, but the box feeders have no equivalent. I also tried
+`SET_STEPPER_ENABLE STEPPER="box_stepper slot2" ENABLE=0` to drop the holding
+torque, and Klipper rejected it: `Invalid stepper`. The feeder motor, driven from
+the UI, is the only grip you have.
+
+Do **not** start by opening things. The 4-in-1 hub is 4 screws and is the serviceable
+spot where broken pieces usually end up. The slot feeder gear train is 24+ screws
+and at least one owner reports damaging theirs getting in. On a week-old unit,
+message support first and get the answer in writing.
+
+QIDI publishes a [QDE error code list](https://wiki.qidi3d.com/en/QIDIBOX/qde-code)
+which is worth checking before guessing. QDE_004_002 is the hub already detecting
+filament, 004_003 and 004_004 are unload failing to exit the feed port, and 004_009
+is filament not exiting the hub.
+
+### The state machine gets stuck too
+
+Worth knowing, because it makes the symptom confusing. The box records where it is
+in a load or unload sequence in `saved_variables`, and if a sequence dies partway
+the flags stay set:
+
+```
+slot2          = -2       (fault; healthy slots read 0, or 2/3 when loaded)
+retry_step     = EXTRUDER_UNLOAD2_2
+load_retry_num = 5001
+extrude_state  = 2        (healthy: -1)
+```
+
+Repeated eject attempts resume that same failed sequence. Mine did advance through
+steps as I retried, so it is not a hard loop, but it looks like one. Once the
+physical obstruction was gone and filament was reloaded, the slot went back to a
+normal positive value on its own and the leftover flags stopped mattering.
+
+If you ever do need to reset them, the healthy values are
+`retry_step = None`, `load_retry_num = 0`, `extrude_state = -1`.
+
+### Every spool in the box got the same treatment
+
+Obvious in hindsight, and worth saying out loud: only one of my four spools jammed,
+but all four were sitting in the same heated box. The black one failed because it
+happened to be the loaded one, so it was the only filament under tension. Necking
+needs tension, which is why the other three came out looking fine.
+
+That does not mean they are fine. They all got warmed, and the sections closest to
+the elements and inside the feeders got the worst of it.
+
+What I would do, and did:
+
+- Pull off and bin a generous length from each spool, 30 to 50 cm. The end that was
+  sitting in the feeder is the most suspect part.
+- Look at what you unwind. Anything glossy, thinned, oval, flattened or wavy goes in
+  the bin, not the extruder.
+- Watch the first print of each colour. A section that drew slightly but not enough
+  to snap will show up as under-extrusion before it becomes a jam.
+- Dry the spools properly before trusting them, in a cycle with the vent open, not
+  by holding the box at temperature with filament loaded.
 
 ## You cannot set the box heater from Fluidd
 
