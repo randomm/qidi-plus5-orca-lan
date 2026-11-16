@@ -140,6 +140,29 @@ So: ironing off for thin films. The 2-layer panels are noticeably stiffer;
 warming them before curling them helps. If your design has overlapping seam
 tabs, check what thinning the lower ribs does to them.
 
+## Test on coupons, and put every variant on one plate
+
+Don't spend a whole part on a settings experiment. Cut a small piece out of the
+real model (whole cells only: split the mesh into connected bodies and keep the
+ones whose centroid falls inside a box; a boolean cut through overlapping
+bodies goes wrong) and print all the variants together, each with its own
+`assemble_index`.
+
+Box colour changes happen per **layer height across the whole plate**, so
+variants on one plate share them. My four coupons needed 5 changes together;
+printed one by one they would have needed 11, plus four warm-ups and bed-mesh
+runs. A same-height copy for a settings comparison adds no changes at all.
+
+Per-object overrides (`print_params` in the assemble list) depend on the key:
+`ironing_type` worked on just one coupon, but `bridge_speed` was silently
+ignored. Check that an override actually changed the G-code before trusting
+the comparison.
+
+Measured cost of one colour change on this printer: 88-191 mm of flushed
+filament (0.3-0.6 g), dark-to-light being the expensive direction. On small
+multi-colour prints the changes, not the plastic, set the print time: four
+coupons with 7.6 g of parts took about 52 minutes.
+
 ## Uploading and starting over Moonraker
 
 `POST /printer/print/start?filename=...` is the natural move, but some HTTP

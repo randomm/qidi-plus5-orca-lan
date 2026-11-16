@@ -73,3 +73,12 @@ the unit, and you won't get told.
 *Mechanism verified read-only over SSH on one X-Plus 5. The mask command is the
 standard systemd move but I didn't run it on my unit, only read the state. Adapt
 at your own risk, and correct this page if your printer disagrees.*
+
+## Fluidd suddenly "unreachable" from a Mac browser
+
+If the browser says `ERR_ADDRESS_UNREACHABLE` for `http://<printer-ip>/` but
+`curl -I http://<printer-ip>/` from the same Mac returns `200 OK`, nothing is
+wrong with the printer or the network. macOS has revoked that browser's Local
+Network permission (app or OS updates can reset it). Fix: System Settings →
+Privacy & Security → Local Network → switch the browser on, then quit it fully
+(Cmd+Q) and reopen.
