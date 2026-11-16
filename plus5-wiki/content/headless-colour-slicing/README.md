@@ -106,20 +106,39 @@ Always verify against the slice output rather than the intent:
 `grep value_t plate_1.gcode` plus checking `UNLOAD_T*` order matches the
 colour sequence you expect.
 
-## Thin horizontal films: the settings that matter are the bridge ones
+## Thin horizontal films: one bridged layer will never be solid
 
 For a single-layer (0.2 mm) colour film spanning ~9.5 mm cell openings, I
-chased the wrong setting first. Evidence, from byte-comparing slices:
-`sparse_infill_density` 15% vs 100% produced **identical** membrane material —
-the film is not sparse-infill classified. The `;TYPE:` tags showed it as
-`Bridge`: dense paths, but at `bridge_speed=50` mm/s with `bridge_flow=1` a
-PLA strand spanning 9.5 mm of nothing sags into a stringy web. Bridging wants
-the opposite of what you'd guess: fast and thin. Current (pending print
-verification) patch: `bridge_speed=120`, `bridge_flow=0.9`,
-`internal_bridge_speed=100%`, monotonic internal solid infill,
-`infill_wall_overlap=25%`, part fan 100%. The dense-but-sagged print and the
-gcode proof of the classification are both in the photo record; the fixed
-settings' print result is to be confirmed.
+chased the wrong settings for three prints. What the evidence says:
+
+- `sparse_infill_density` 15% vs 100% produced **byte-identical** membrane
+  material: the film is not sparse infill. The `;TYPE:` tags show it as
+  `Bridge`, and the extruded path length covers the whole film area, so the
+  slicer *does* lay a dense film.
+- The printed result is still parallel strands with hairline slits. They are
+  taut and anchored, not sagging. A bridge strand is extruded into air: it stays
+  round and only touches its neighbours, because nothing presses it flat.
+- Tried, none of them closed the slits: bridge 50 mm/s flow 1.0; 120 mm/s flow
+  0.9; `thick_bridges=1` with flow 1.05 (+20% film material, only slightly
+  denser); `bridge_density=120%`. `bridge_no_support` changed nothing at all.
+
+The strand look is a nice finish in its own right (it reads as hand-drawn
+hatching when backlit), but it is not a film.
+
+**What works: two film layers.** The second layer prints *on* the first, Orca
+classifies it as `Top surface`, and it gets pressed into a real sheet. I printed
+test coupons side by side on one plate:
+
+| Coupon | Build | Result |
+|---|---|---|
+| 1 | 1 film layer, 1.0 mm total | strands; visible gaps between film and frame |
+| 2 | 2 film layers, 1.2 mm total | solid, no gaps |
+| 3 | 2 film layers, 1-layer lower ribs, 1.0 mm total | **best**: solid, cleanest film |
+| 4 | coupon 2 + ironing | solid, but the surface looks molten and uneven |
+
+So: ironing off for thin films. The 2-layer panels are noticeably stiffer;
+warming them before curling them helps. If your design has overlapping seam
+tabs, check what thinning the lower ribs does to them.
 
 ## Uploading and starting over Moonraker
 
