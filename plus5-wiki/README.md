@@ -47,6 +47,12 @@ Inner walls silently running at 10000 mm/s2, a volumetric cap that makes the spe
 tiers meaningless, a flow ratio that is a blanket default for every material, and
 the corner test that tells you which defect you are looking at.
 
+### [Slicing multi-colour jobs completely headless (CLI lane)](./content/headless-colour-slicing/README.md)
+**Separate use case:** no GUI at all — `orca-slicer` CLI over SSH, Moonraker
+upload/start, QIDI Box swaps. The assemble-list path that actually works, the
+per-object `auto_drop` trap, per-job `value_t` bindings, and what really
+controls thin-film quality. Read only if you're scripting the slicer.
+
 ### [The QIDI Box does not vent itself](./content/qidi-box-drying/README.md)
 Mine sat at 43% RH for days doing nothing. Why a sealed box is bad at drying, why
 PLA is locked out of both drying modes, why the heater elements hit 85 C, and how
