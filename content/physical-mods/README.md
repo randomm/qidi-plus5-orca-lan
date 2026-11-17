@@ -17,6 +17,10 @@ plate ([why](../box-reliability/README.md)). Options made for the Plus 5:
 - [Qidi Plus 5 Poop Chute/Poop Bin/Bucket (Technix AM, on QIDI
   Maker)](https://www.qidimaker.com/en/home) - same designer as the free riser
   below
+- [Qidi Plus 5 Waste Bin (Kramer, Printables)](https://www.printables.com/model/1811886) -
+  magnetically attached purge catcher on the *rear* waste chute (8x 20x10x5
+  neodymium magnets, epoxy, print in ASA; bracket reuses the chute's three
+  existing screws)
 - The [Cults3D "qidi" tag](https://cults3d.com/en/tags/qidi) also carries a
   free snap-in purge bin and new designs appear weekly - check it before
   printing anything from another printer's page (Plus 4 chutes mount
@@ -71,6 +75,12 @@ recommended.
 Material call either way: PETG or ASA for anything living near a dryer or the
 chamber exhaust (PLA only if it never will).
 
+Going **under** instead of up: [TPU riser feet
+(XRasher)](https://www.printables.com/model/1884566) press onto the stock
+feet, damp vibration, and lift the printer ~22 mm - exactly enough for the
+matching [under-printer organizer](https://www.printables.com/model/1884581)
+to slide underneath. Prints in TPU, two walls, 10% infill.
+
 ## Chamber and filtration
 
 - **Seal the chamber** for stable high temps and fewer fumes: close the long
@@ -123,6 +133,9 @@ enjoy re-tuning every temperature sensor relationship you have.
   pen-spring stock gear - reliable spool rewind, no more click-click (4x
   HF0306 bearings + M3 washers; six months in and out of beta by July 2026).
   Fully reversible.
+- **Spare cutter arm**: [Filament Cutter Arm QIDI Plus 5
+  (AP)](https://www.printables.com/model/1824360) - a printable replacement
+  for the Box's cutter arm, trivially easy print.
 - **Automated filament cutting in the Box**: [RVfan's AMS 2 Pro Saver / Snag
   Cutter base plate](https://www.printables.com/model/1483937) adapts
   Hexavalent's Bambu-AMS cutter system into the QIDI Box. Needs 4 Bambu
@@ -142,7 +155,9 @@ Q2 owners should be raiding this page right back). Rough guide:
   light mounts, hand tools. Check screw positions before committing filament.
 - **Maybe, with checking**: toolhead and extruder parts - close family, not
   identical twins (the Q2 PTFE clip needed a remix for a newer printhead,
-  which tells you the geometry moved between revisions).
+  which tells you the geometry moved between revisions). Nozzle/hotend
+  storage is the same story: the Q2 boxes are sized for Q2 nozzles (52.9 mm
+  long, 7 mm hex) - measure yours before printing the trays.
 - **No**: anything sized to the machine - build plates (the Q2 bed is
   smaller), risers and external furniture (different footprints), bed-adjacent
   parts, chute mounts.
@@ -176,8 +191,43 @@ you find yourself modding those, something else is wrong - start with
 If you'd rather browse than read:
 
 - [Qidi Plus 5 - Printables collection](https://www.printables.com/@TaiHeng_4155107/collections/3862322) -
-  11 models, "made for or might work with the Qidi Plus 5" *(model list
-  pending)*
+  "made for or might work with the Qidi Plus 5":
+  - Made for the Plus 5:
+    - [Filament Cutter Arm (AP)](https://www.printables.com/model/1824360) -
+      spare Box cutter arm (see Box internals)
+    - [TPU Riser Feet (XRasher)](https://www.printables.com/model/1884566) -
+      vibration damping + 22 mm lift (see Risers)
+    - [Under Organizer (XRasher)](https://www.printables.com/model/1884581) -
+      slides into the riser-feet gap (see Risers)
+    - [Z-axis motor dust cover (Nolan Summers)](https://www.printables.com/model/1846289)
+    - [Waste Bin (Kramer)](https://www.printables.com/model/1811886) -
+      magnetic purge catcher on the rear chute (see purge section)
+    - [D3P riser for Plus 5 (Darren3dPrint, paid)](https://cults3d.com/en/3d-model/tool/d3p-riser-for-qidi-plus-5) -
+      see Risers
+  - Q2 parts that may carry over (see the compatibility section):
+    - [Q2 Hot Bed Nut Wrench (gasdocscott)](https://www.printables.com/model/1572093) -
+      tapered remix that actually grips the bed leveling nuts - the Q2
+      shares the Plus 5's bed-nut arrangement
+    - [Q2 Toolhead Cover sets (ricrom)](https://www.printables.com/model/1445446) -
+      magnet-mounted covers; lid wants ASA, and they predate the Polar
+      Cooler (fit conflict noted by the author)
+    - [Q2 Nozzle Storage Box (deusdara, MakerWorld)](https://makerworld.com/models/3431512) -
+      hinged 8-slot box, two of each size, snap clips sized to the Q2
+      nozzle's 4.75 mm smooth section
+    - [Q2 nozzle gridfinity bin, 4 nozzles (TheSpyWhoLovedToBake)](https://www.printables.com/model/1834022)
+    - [Q2 Gridfinity Hot End bin (Gu1tarzan)](https://www.printables.com/model/1736722) -
+      2x2, for a spare hotend
+    - [Gridfinity Q2 Nozzle Box (_Storch_, Cults3D)](https://cults3d.com/en/3d-model/tool/gridfinity-qidi-q2-nozzelbox)
+    - [Toolbox for Q2 tools (Dmitry)](https://www.printables.com/model/1638608)
+    - [D3P Custom Inserts for Qidi Q2 (Cults3D)](https://cults3d.com/en/3d-model/tool/d3p-custom-inserts-for-qidi-q2) -
+      drawer inserts for the D3P riser: hotend, silicone sock, lubricant,
+      thermal grease, fuses, wiper roller/brush, cutter, wrench, hex keys,
+      screwdriver, glue stick
+    - [Q2 Nozzle Inserts for D3P Riser (Moobien, Cults3D)](https://cults3d.com/en/3d-model/tool/q2-nozzle-inserts-for-d3d-riser) -
+      nozzle drawer inserts for the same riser system
+  - One generation back (concept transfers, inserts don't):
+    - [Spare Parts/Toolbox rugged box for the Plus 4 (ECF)](https://www.printables.com/model/1229572) -
+      the spare-parts + tools organization idea, Plus 4-shaped
 - [Qidi box - Printables collection](https://www.printables.com/@TaiHeng_4155107/collections/3866381) -
   5 models:
   - [Qidi Box clip set - PTFE tubing and cable management (Joe the Builder)](https://www.printables.com/model/1526810) -
