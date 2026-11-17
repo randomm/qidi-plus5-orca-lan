@@ -36,6 +36,11 @@ plate ([why](../box-reliability/README.md)). Options made for the Plus 5:
   (context on [the reliability page](../box-reliability/README.md)). The hub
   wants 50 mm of straight tube before entry - this fixes the commonest feed
   failure.
+- **PTFE/cable management clip set** - bundles the Box tubes with a gradual
+  sweep into the hub instead of tight bends (25 mm clips closest to the hub,
+  separators for multi-box runs):
+  [Qidi Box clip set (Printables 1526810)](https://www.printables.com/model/1526810).
+  Same disease as the jam guide, prevention side.
 - **Capricorn-style tubing** for the Box runs - same story, less friction.
 
 ## Risers: paid standard, free alternative
@@ -106,12 +111,23 @@ enjoy re-tuning every temperature sensor relationship you have.
 
 ## Box internals
 
-- **Desiccant capacity**: stock trays are small - there's a cottage industry
-  of printed large-capacity desiccant modules ([the drying
-  page](../qidi-box-drying/README.md) has the numbers). Print them in ABS or
-  anything that survives 65 C, because that's what drying cycles run at.
-- **The Box clicks** on every load - community grease mods exist for the
-  feeders. Cosmetic, not functional.
+- **Desiccant capacity**: stock trays are small. The standard upgrade is
+  [R985's high-capacity desiccant bin](https://www.printables.com/model/1386559)
+  (original hardware, no modification, narrower slots in the updated
+  revision) with [GoodHope's top cap](https://www.printables.com/model/1430915)
+  - print in ABS; [the drying page](../qidi-box-drying/README.md) has the
+  numbers on why capacity matters.
+- **The Box clicks** on every load, and the fix is mechanical:
+  [weav's spool driven gear with an HF0306 one-way
+  bearing](https://www.printables.com/model/1571032) replaces the
+  pen-spring stock gear - reliable spool rewind, no more click-click (4x
+  HF0306 bearings + M3 washers; six months in and out of beta by July 2026).
+  Fully reversible.
+- **Automated filament cutting in the Box**: [RVfan's AMS 2 Pro Saver / Snag
+  Cutter base plate](https://www.printables.com/model/1483937) adapts
+  Hexavalent's Bambu-AMS cutter system into the QIDI Box. Needs 4 Bambu
+  replacement filament cutters plus PTFE offcuts from the Box install kit;
+  PETG/ASA, Arachne walls, supports required.
 
 ## Q2 compatibility: what carries over
 
@@ -160,10 +176,22 @@ you find yourself modding those, something else is wrong - start with
 If you'd rather browse than read:
 
 - [Qidi Plus 5 - Printables collection](https://www.printables.com/@TaiHeng_4155107/collections/3862322) -
-  11 models, "made for or might work with the Qidi Plus 5"
+  11 models, "made for or might work with the Qidi Plus 5" *(model list
+  pending)*
 - [Qidi box - Printables collection](https://www.printables.com/@TaiHeng_4155107/collections/3866381) -
-  5 models for the Box
-- [Qidi Plus 5 - Cults3D collection by zqwzzle](https://cults3d.com/en/design-collections/zqwzzle/qidi-plus-5)
+  5 models:
+  - [Qidi Box clip set - PTFE tubing and cable management (Joe the Builder)](https://www.printables.com/model/1526810) -
+    bundled tubes, gradual sweep into the hub (see Filament path above)
+  - [Spool driven gear, HF0306 one-way bearing (weav)](https://www.printables.com/model/1571032) -
+    the click and rewind fix (see Box internals above)
+  - [High-capacity desiccant bin, updated (R985)](https://www.printables.com/model/1386559) -
+    the desiccant upgrade (see Box internals above)
+  - [Top cap for the desiccant bin (GoodHope)](https://www.printables.com/model/1430915) -
+    companion cap for the bin above
+  - [AMS 2 Pro Saver / Snag Cutter base plate (RVfan)](https://www.printables.com/model/1483937) -
+    automated cutting in the Box (see Box internals above)
+- [Qidi Plus 5 - Cults3D collection by zqwzzle](https://cults3d.com/en/design-collections/zqwzzle/qidi-plus-5) *(model
+  list pending)*
 
 ---
 
