@@ -25,6 +25,13 @@ mesh_max: 305,305
 probe_count: 7,7
 ```
 
+(Those bounds are what this page was written against, September 2026. Firmware
+v01.01.02.01 ships different stock values - `mesh_min: 25,10`, `mesh_max:
+315,315`, `probe_count: 9,9` - a 25 mm unprobed strip on the left, 10 mm at the
+front, thin margins on the other two sides. Different shape, same point: the
+probed area is smaller than the printable area. Query your own before editing -
+read-only command at the bottom of this page.)
+
 So there is a 15 mm strip along every edge that is inside the printable area and
 outside the probed area. Klipper does not refuse to print there. It extrapolates
 the mesh outward from the last probed point and carries on.
@@ -91,9 +98,33 @@ mid-print, nothing catches it until the next one.
 actual preventable cause. Orca will happily let you drop a part at Y=311 and say
 nothing, so it has to be a habit rather than a warning you wait for.
 
-If you really need the full plate, you can raise `mesh_max` in `printer.cfg`, but
-check the probe can physically reach that far first. I have not tried this, so I
-cannot tell you where it stops.
+If you really need the full plate, expand the mesh. Update from a second unit on
+firmware v01.01.02.01 (November 2026), where stock ships `mesh_min: 25,10`,
+`mesh_max: 315,315`, `probe_count: 9,9` - this edit, applied and verified on that
+unit:
+
+```
+[bed_mesh]
+mesh_min: 10,10
+mesh_max: 315,315
+probe_count: 11,11
+```
+
+- `mesh_min` 25,10 -> **10,10** recovers the left and front strips.
+  `mesh_max` was already 315,315 on that firmware.
+- `probe_count` 9,9 -> **11,11** keeps the centre point probed and covers the
+  wider span (121 points).
+- Result: about 305 x 305 mm probed, ~7.5 mm safety margin per side. The
+  lower-left 9 x 13 mm cutter zone stays non-printable regardless.
+- If the nozzle cannot physically reach 10,10 (probe-out-of-range on mesh
+  start), bump `mesh_min` to 15,15 and live with it.
+- Leave the other `[bed_mesh]` values (`speed`, `horizontal_move_z`, `algorithm`,
+  `bicubic_tension`, `mesh_pps`) stock.
+
+Edit via Fluidd (Configuration -> `printer.cfg` -> Save & Restart). Same caveat as
+every `printer.cfg` edit: a firmware update replaces the file - QIDI keeps the old
+one as `printer-<date>.cfg` - so re-apply after updates and re-check the probe
+still reaches.
 
 Brim on anything near the edges is cheap insurance too.
 
@@ -118,6 +149,7 @@ couplers before you blame the slicer for anything.
 
 ---
 
-*Measured on one X-Plus 5 in September 2026, OrcaSlicer 2.5.0-dev. The mesh and
-printable-area values come from the stock profile and stock `printer.cfg`, so they
-should apply to every Plus 5 until QIDI changes them. Corrections very welcome.*
+*Measured on one X-Plus 5 in September 2026, OrcaSlicer 2.5.0-dev; the mesh
+expansion above verified on a second unit on firmware v01.01.02.01, November
+2026. The stock mesh values are firmware-dependent - check yours with the query
+above before editing. Corrections very welcome.*
