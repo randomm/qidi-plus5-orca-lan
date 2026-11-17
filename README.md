@@ -16,6 +16,10 @@ that's mostly what these pages are here to catch.
 
 ## Getting in and set up
 
+### [Just arrived: a checklist for a new unit](./content/getting-started/README.md)
+First boot, first print, first week - what to verify on a new X-Plus 5, roughly
+in order, with the page that explains each item.
+
 ### [SSH access](./content/ssh-access/README.md)
 `qidi` / `qiditech`. The old `mks` / `makerbase` doesn't work anymore.
 
