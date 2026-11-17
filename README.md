@@ -128,6 +128,26 @@ closed `.so` modules, the QIDILink tunnel and how to disable it) — lives in
 ([tools/flatten.py](./tools/flatten.py)) and the Orca profile patches
 ([contrib/](./contrib/)) alongside.
 
+## AI use disclosure
+
+The pages original to this wiki (SSH access, the Orca profiles, LAN mode,
+box colour mapping, the bed-mesh trap, print-quality tuning, box drying and
+the headless lane) are human-written field notes. Everything added in this
+fork — the restructure and the newer pages (the checklist, known issues,
+reliability, maintenance, physical mods, klipper mods and the rest) — was
+drafted with AI assistance at the maintainer's direction:
+
+- The maintainer curated the sources — which threads, repos, models and
+  collections matter — and reviewed and committed every change.
+- Drafting, source-gathering and the mechanical link checks were done by an
+  AI assistant working from those sources.
+- Community-sourced claims are attributed and linked as such; nothing is
+  claimed as "verified on my unit" unless it actually was.
+
+Treat the AI-assembled summaries the way you'd treat any secondhand report:
+follow the linked source before betting filament — or a firmware flash — on
+it. Corrections welcome; that's the whole point of a community wiki.
+
 ---
 
 *All of this started from poking at one X-Plus 5 read-only over SSH. Verified vs
