@@ -33,6 +33,11 @@ Out of the box it loads the wrong slot every time. Why (a stale `value_t0`
 variable Orca never writes), and the four-line start-gcode fix that makes colour
 selection actually work.
 
+### [The stock Fluidd panel, the 2026 firmware, and the `?` slots](./content/qidi-box-fluidd-panel/README.md)
+Every box slot shows `?`, the external spool resets to "PLA Basic", and the print
+dialog refuses with "No filament detected". Not your unit - the bundled Fluidd was
+never updated for the QF-ID format change. Patch it, route around it, or script it.
+
 ---
 
 ## Printing well, and not wrecking things
