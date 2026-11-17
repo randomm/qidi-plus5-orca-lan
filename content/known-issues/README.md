@@ -107,6 +107,40 @@ or config stuff that stops biting once you know it.
   [box-colour mapping](../qidi-box-colour-mapping/README.md) and
   [the Fluidd panel page](../qidi-box-fluidd-panel/README.md).
 
+## Squeaks, clicks and knocks
+
+- **Squeaking during motion.** Ranked by how often the fix works, from
+  reports across the QIDI family (Q1 Pro, Plus 4 and the Q2, which shares
+  this generation's motion parts):
+  1. **A belt riding up the idler pulley's flange.** The Q2 case: the belt
+     walks up and down the pulley and squeaks against the flange when it
+     rides up - fix is belt tension, per [QIDI's own belt-tension
+     guide](https://drive.google.com/file/d/1DtAEVT7H-6fVL1ZpZgguUZqdC-jRw0mG/view?usp=sharing).
+     Caveat from the Q1 world: the self-adjusting tensioners have a
+     reputation for running chronically loose.
+     ([r/QIDI Q2 thread](https://www.reddit.com/r/QIDI/comments/1r2yqmx/q2_y_axis_belt_moving_squeeking_against_pulley/))
+  2. **Dry idler pulley bearings.** The Q1 Pro fix: silicone oil on the
+     pulleys - all of them, because the culprit is hard to isolate by ear.
+  3. **Dry Z lead screws** - the Plus 4 "screech near the top of the screws"
+     case: clean them and use **grease, not oil** (NLGI 2):
+     [the maintenance page](../maintenance/README.md).
+  4. **Dry linear shafts** - the 2-4 week oiling cadence, same page.
+  5. **Speed-and-height-specific resonance.** At least one owner's screech
+     only happens at one motion speed and height, the tone shifts when you
+     touch the rods, and nothing fixes it - he lives with it. Check your
+     input-shaper results before chasing a ghost.
+- **The belt walks a crooked pulley, rubbing both flanges.** QC issue, not
+  maintenance: a crooked X-axis idler out of the box, belt touching both
+  flanges, support calling it "within the normal working range". Film it,
+  push for a replacement while you're in the return window - belt tensioning
+  won't straighten a pulley. ([September
+  thread](https://www.reddit.com/r/QidiTech3D/comments/1wf86gv/qidi_plus5_issue_with_pulley_and_bed_leveling/);
+  a second owner reported a crooked lower-left idler fresh out of the box.)
+- **Knocking on the top glass** - the PTFE tube catching the lid handle
+  screws: [the physical-mods page](../physical-mods/README.md).
+- **Clicking from the Box on every load** - the one-way gear fix:
+  [physical mods](../physical-mods/README.md).
+
 ## Slicer and software
 
 - **OrcaSlicer 2.4.x: no profile, sync crashes, wrong slots.** All fixed by
