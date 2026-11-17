@@ -67,6 +67,12 @@ Mine sat at 43% RH for days doing nothing. Why a sealed box is bad at drying, wh
 PLA is locked out of both drying modes, why the heater elements hit 85 C, and how
 to drive it from the console when Fluidd refuses.
 
+### [How reliable is the QIDI Box, really](./content/box-reliability/README.md)
+Community evidence, Oct-Nov 2026: the OrcaSlicer version timeline (2.5.1 is
+mandatory on current firmware), what actually breaks ranked by report volume,
+feed-failure causes and fixes, auto-refill reports, the economics of
+single-nozzle colour changes, and a decision guide.
+
 ---
 
 ## LAN-only setup — this repo's origin
