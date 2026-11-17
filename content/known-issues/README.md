@@ -133,9 +133,11 @@ or config stuff that stops biting once you know it.
   maintenance: a crooked X-axis idler out of the box, belt touching both
   flanges, support calling it "within the normal working range". Film it,
   push for a replacement while you're in the return window - belt tensioning
-  won't straighten a pulley. ([September
-  thread](https://www.reddit.com/r/QidiTech3D/comments/1wf86gv/qidi_plus5_issue_with_pulley_and_bed_leveling/);
-  a second owner reported a crooked lower-left idler fresh out of the box.)
+  won't straighten a pulley. ([r/QidiTech3D: "Qidi Plus5 issue with pulley
+  and bed
+  leveling"](https://www.reddit.com/r/QidiTech3D/comments/1wf86gv/qidi_plus5_issue_with_pulley_and_bed_leveling/) -
+  a second owner, u/dsnineteen, reported a crooked lower-left idler fresh
+  out of the box in the same thread's comments.)
 - **Knocking on the top glass** - the PTFE tube catching the lid handle
   screws: [the physical-mods page](../physical-mods/README.md).
 - **Clicking from the Box on every load** - the one-way gear fix:
