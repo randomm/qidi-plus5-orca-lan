@@ -88,6 +88,12 @@ Skip the end-of-print unload, 1080p timelapses, a 30 mm start purge instead of
 200+, UPS-safe sequential heating, heating the Box during Orca prints, the
 `enable_box` console flip, and cooler stepper drivers.
 
+### [Box and printer internals: commands, variables, and traps](./content/box-internals/README.md)
+The `save_variables` schema (0-based slots, `slot16` = external), load/unload/
+eject commands and their timings, dryer commands, the Moonraker endpoints
+worth knowing, and the traps - `M106 P3` killing chamber heating, the
+`SLOT=99` Klipper shutdown, `#` in macro code.
+
 ---
 
 ## LAN-only setup — this repo's origin
