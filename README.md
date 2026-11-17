@@ -78,6 +78,11 @@ The 12 h `[idle_timeout]` in printer.cfg is not your refill window - QIDI's
 PAUSE macro overrides it to 72 h in RAM, the hotend dies instantly on runout,
 and here's what actually happens to a job that sits paused past the line.
 
+### [Maintenance: what to lube, when, and with what](./content/maintenance/README.md)
+The schedule, the specific greases and oils (NLGI 2 for the Z screws, ~68 cSt
+for the shafts), thermal-grease intervals by filament temperature, spares
+worth owning, and the don'ts.
+
 ---
 
 ## LAN-only setup — this repo's origin
