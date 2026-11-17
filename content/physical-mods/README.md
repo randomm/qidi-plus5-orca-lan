@@ -240,8 +240,6 @@ If you'd rather browse than read:
     companion cap for the bin above
   - [AMS 2 Pro Saver / Snag Cutter base plate (RVfan)](https://www.printables.com/model/1483937) -
     automated cutting in the Box (see Box internals above)
-- [Qidi Plus 5 - Cults3D collection by zqwzzle](https://cults3d.com/en/design-collections/zqwzzle/qidi-plus-5) *(model
-  list pending)*
 
 ---
 
