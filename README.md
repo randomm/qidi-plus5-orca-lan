@@ -94,6 +94,10 @@ eject commands and their timings, dryer commands, the Moonraker endpoints
 worth knowing, and the traps - `M106 P3` killing chamber heating, the
 `SLOT=99` Klipper shutdown, `#` in macro code.
 
+### [Community resources for the Plus 5](./content/community-resources/README.md)
+The sibling wikis (Plus 4, Q2, Max 4), the firmware tracker, the fix and tool
+repos, the official pages, and where the discussion actually happens.
+
 ---
 
 ## LAN-only setup — this repo's origin
