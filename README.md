@@ -20,6 +20,12 @@ that's mostly what these pages are here to catch.
 First boot, first print, first week - what to verify on a new X-Plus 5, roughly
 in order, with the page that explains each item.
 
+### [Known issues: a symptom-first index](./content/known-issues/README.md)
+What breaks and where the fix lives - the bed hill, heat-creep jams with the
+lid closed, leveling-before-every-print, Box feed failures and material limits,
+Box hub compatibility, firmware recovery, detection limits. Each entry links
+the page (or source) that goes deep.
+
 ### [SSH access](./content/ssh-access/README.md)
 `qidi` / `qiditech`. The old `mks` / `makerbase` doesn't work anymore.
 
