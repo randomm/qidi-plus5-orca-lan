@@ -114,7 +114,16 @@ enjoy re-tuning every temperature sensor relationship you have.
 - [R3men real carbon-fiber plate](https://r3men.com/products/real-carbon-fiber-build-plate-for-qidi-plus-5) -
   CF laminate on 1 mm steel, community-tested from PLA through PPS-CF; good
   adhesion, clean release, no glue
-- Custom-cut textured/smooth PEI from Juupine / ENERGETIC on AliExpress
+- **Aftermarket 320 x 320 is a rare size.** The old Energetic 320x320
+  listings (Tevo Nereus era) are gone; current AliExpress stock runs
+  320x310 or 350x320. Live routes:
+  [AliExpress search for 320x320 PEI](https://www.aliexpress.com/w/wholesale-energetic-pei-magnetic-sheet-320x-320.html),
+  the [Energetic3D storefront](https://www.aliexpress.com/store/1101427698)
+  (their older listings advertised customized sizes - worth a store message),
+  or [Aurarum's double-sided 320x320 with magnetic
+  base](https://aurarum.com.au/shop/double-sided-pei-flexible-bed-with-magnetic-base-320x320)
+  (Australian store). Energetic 330x330 sheets are live but overhang the
+  stock platform by 5 mm a side - unverified fit.
 - **Don't fit**: Plus 4 plates (305 x 305), BIQU CryoGrip Pro (300 x 300
   max), and the generic "QIDI" 280/300 plates that are really for the older
   X-series
