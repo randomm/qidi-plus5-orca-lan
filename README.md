@@ -94,6 +94,12 @@ eject commands and their timings, dryer commands, the Moonraker endpoints
 worth knowing, and the traps - `M106 P3` killing chamber heating, the
 `SLOT=99` Klipper shutdown, `#` in macro code.
 
+### [Klipper mods: what you can change, what breaks, and going mainline](./content/klipper-mods/README.md)
+Why kiauh and the update buttons brick QIDI machines (a fork with closed
+modules), how people recover, what's safe to mod at the config level, and the
+full mainline Kalico/Katapult conversions documented for the Plus 4 and Q2 -
+not yet the Plus 5.
+
 ### [Community resources for the Plus 5](./content/community-resources/README.md)
 The sibling wikis (Plus 4, Q2, Max 4), the firmware tracker, the fix and tool
 repos, the official pages, and where the discussion actually happens.
