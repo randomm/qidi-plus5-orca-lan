@@ -50,7 +50,47 @@ works with the official firmware updates.
 ## What you *can* mod on stock (config and userspace level)
 
 The good news: almost everything that matters day-to-day is config, and config
-is yours.
+is yours. **But do this first:**
+
+### The one mod before any mod: back up the config
+
+Before the first `[include]` or macro edit, pull the printer's config off the
+machine. Firmware updates replace `printer.cfg` wholesale (they leave a
+`printer-<date>.cfg` copy, but that's the single file — the shipped macros,
+Box config, and Moonraker settings change across versions too). A full backup
+gives you a baseline for diffs and a recovery path if an edit halts Klipper.
+
+Config lives at `/home/qidi/printer_data/config/`. SSH in (see
+[the SSH page](../ssh-access/README.md)), then:
+
+```bash
+# Pull it to your local machine
+scp -r qidi@<ip>:/home/qidi/printer_data/config/ ./plus5-config-backup/
+
+# Or compress on the printer first
+ssh qidi@<ip> "tar czf /tmp/config-backup.tar.gz -C /home/qidi/printer_data config/"
+scp qidi@<ip>:/tmp/config-backup.tar.gz ./
+```
+
+Routine:
+- Full backup **before your first edit** (your baseline).
+- Repeat after every firmware update (the tree changes more than
+  `printer.cfg`).
+- Keep them dated (`plus5-config-2026-11-17.tar.gz`).
+- Diff against the baseline when troubleshooting.
+
+For an automated approach, the community-standard
+[klipper-backup](https://github.com/Staubgeborener/klipper-backup) script does
+incremental backups on the printer itself and pushes to GitHub — it adds a Moonraker
+update-manager plugin, so it shows up in Fluidd's update panel. On QIDI firmware
+its Moonraker integration needs the system Moonraker to be writable (the stock
+one is), but the automatic dependency updates that the script also configures
+will fight QIDI's fork — install only the backup half, not the update half.
+
+After a firmware update, re-adding your mods is a single
+`[include my-macros.cfg]` in the new `printer.cfg`.
+
+---
 
 - **Config includes**: add your own `.cfg` files and one `[include]` line to
   `printer.cfg` - macros, fan behaviour, whatever Klipper config supports
