@@ -107,6 +107,13 @@ gear ratio, per the
 
 ## Flow ratio 0.98 is a blanket default, not a PLA value
 
+> OrcaSlicer's built-in filament calibration places [pressure advance
+> before flow](https://www.orcaslicer.com/wiki/guides/calibration_guide) -
+> PA is more often wrong out of the box, and cleaner corners from tuned PA
+> make the flow test easier to read. The ordering below is what worked on
+> *this* machine, measured with the numbers that follow; both orders
+> converge if you re-check PA after a big flow change.
+
 This turned out to be the big one, so it goes first.
 
 Every filament ships with:

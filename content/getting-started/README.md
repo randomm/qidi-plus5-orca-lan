@@ -37,13 +37,16 @@ about.
   [Ellis' extruder calibration](https://ellis3dp.com/Print-Tuning-Guide/articles/extruder_calibration.html).
   If the rotation distance is off, every later calibration - flow, PA -
   measures a lie.
-- [ ] **Calibrate flow next**, after the extruder, before temperature towers or
-  pressure advance.
-  The stock `filament_flow_ratio: 0.98` is a blanket default inherited by every
-  material, not a measured PLA value - one unit measured 0.94 (4% over-extrusion,
-  the classic cause of pronounced layer lines and blobby corners). A PA value
-  measured against wrong flow is a wrong PA value:
-  [print-quality page](../print-quality-tuning/README.md).
+- [ ] **Run OrcaSlicer's filament calibration** — the Calibration menu
+  walks the recommended order in sequence (temperature → max volumetric
+  speed → pressure advance → flow ratio → retraction), each test building
+  on the last; see the
+  [official guide](https://www.orcaslicer.com/wiki/guides/calibration_guide).
+  Orca places pressure advance *before* flow (PA is more often wrong, and
+  tuned corners make the flow test easier to read); the
+  [print-quality page](../print-quality-tuning/README.md) bets the opposite
+  way based on this machine. The guide notes you can re-check PA after flow
+  if the flow number changed by a lot.
 - [ ] While you're in there, know the two stock-profile traps: `0` acceleration
   fields silently inherit 10000 mm/s², and the volumetric cap makes most of the
   speed tiers fiction - same
