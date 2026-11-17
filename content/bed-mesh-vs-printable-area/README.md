@@ -128,6 +128,65 @@ still reaches.
 
 Brim on anything near the edges is cheap insurance too.
 
+## If the bed itself is a hill: tram it by hand
+
+The mesh above is about *probed* vs *printable* area. The other half of "my
+first layer is bad on a stock machine" is the **shape** of the bed: out of the
+box, Plus 5 mesh ranges of 0.3-0.6 mm get reported routinely, and the common
+shape is a hill - the centre sits high. One owner's brand-new unit read 0.51 mm
+(mostly a back-to-front tilt); an early reviewer measured 0.47 mm with a patchy
+first layer; a QIDI program tester's unit read 0.6063 mm. Community-reported
+numbers - links at the bottom of this section.
+
+First, decide whether it matters. That tester printed three consecutive full
+315 x 315 mm first layers - SUNLU ABS, bed 90 C, chamber 55 C - on the 0.6 mm
+bed and called the compensation "surprisingly well". So: **print a large
+first-layer test before you touch anything.** If it goes down even and solid,
+the mesh is doing its job and tramming is optional.
+
+If the first layer is patchy (wavy gaps, unfilled stripes), tram it:
+
+- The bed mounts to a square frame on carriages either side; the four corner
+  screws under it carry **nylon nuts** - and on the Plus 5 there is no locknut,
+  the nylon nut is the whole adjuster. Loosening and tightening them pulls the
+  plate flatter.
+- **Print the wrench first.** QIDI ships a `Hot bed nut wrench` model in the
+  printer's own internal files (touchscreen -> Internal), and support will
+  email it on request. The nuts are too stiff for fingers.
+- The on-screen **Platform calibration** walks the procedure (QIDI calls the
+  nuts the "coarse" adjustment). One owner took 0.51 mm down to 0.282 mm this
+  way; an early reviewer went 0.47 -> 0.33 mm and got a near-flawless first
+  layer after. Rotate in **very small increments** - with no locknut the nut
+  holds by friction alone, and it is easy to overshoot.
+- Community wrenches exist too, designed for the Plus 4's adjusters (same
+  family - check the fit against your nuts): [Kameo's bed adjustment
+  wrench](https://www.printables.com/model/1041612-qidi-plus-4-bed-adjustment-wrench)
+  is the popular one; [OrbiterNeptune's bed screw adjustment
+  wrench](https://www.printables.com/model/1062894-qidi-4-plus-bed-screw-adjustment-wrench)
+  and [dsieradzki's two-part tramming tool with 30-degree
+  markers](https://cults3d.com/en/3d-model/tool/qidi-plus-4-bed-tramming-tool)
+  are alternatives. The last one's markers line up with Fluidd's hour:minute
+  screw-adjust notation, which makes repeatable small turns easier.
+- Push down on the corner you're adjusting to unload the nut - documented with
+  photos for the Max 4, whose bed uses the same arrangement:
+  [Max 4 community wiki - Heated Bed
+  Screws](https://github.com/thelegendtubaguy/QidiMax4CommunityWiki/blob/main/docs/heated_bed_screws.md).
+- Some beds don't tram flat. One owner was still at 0.6-0.8 mm after adjusting
+  (and claims the plate is 3 mm thick vs 6 on the Plus 4 - unconfirmed).
+  Fallbacks: shim low spots with Kapton tape, or contact support
+  (Plus5support@qidi3d.com) if first layers still fail at that range.
+
+Threads worth reading, all r/QidiTech3D:
+["QIDI PLUS 5 Poor First Impressions"](https://www.reddit.com/r/QidiTech3D/comments/1vri70p/qidi_plus_5_poor_first_impressions/)
+(the "bed is a hill" origin, Aug 2026),
+["Bed mesh on new qidi plus 5 - mostly back to front tilt"](https://www.reddit.com/r/QidiTech3D/comments/1wk5o9l/bed_mesh_on_new_qidi_plus_5_mostly_back_to_front/)
+(the 0.51 -> 0.282 mm tramming walkthrough + the no-locknut detail), and for
+the sibling generation,
+["QIDI Q2 warped heated bed - 0.405 mm hump"](https://www.reddit.com/r/QidiTech3D/comments/1uitv8z/qidi_q2_warped_heated_bed_0405_mm_hump_transfers/).
+The [printer-hub.ru Plus 5 known-issues
+roundup](https://printer-hub.ru/en/posts/qidi-plus5-known-issues) collects
+the numbers with sources.
+
 ## Checking your own machine
 
 Read-only, no SSH needed:
