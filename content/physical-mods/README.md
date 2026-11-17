@@ -14,6 +14,9 @@ plate ([why](../box-reliability/README.md)). Options made for the Plus 5:
 
 - [QIDI Plus 5 Poop Chute (Cults3D)](https://cults3d.com/en/3d-model/tool/qidi-plus-5-poop-chute)
 - [Plus5 waste/purge/poop bin - two designs (Creality Cloud, free)](https://www.crealitycloud.com/model-detail/qidi-plus5-waste-purge-bin-designs)
+- [Qidi Plus 5 Poop Chute/Poop Bin/Bucket (Technix AM, on QIDI
+  Maker)](https://www.qidimaker.com/en/home) - same designer as the free riser
+  below
 - The [Cults3D "qidi" tag](https://cults3d.com/en/tags/qidi) also carries a
   free snap-in purge bin and new designs appear weekly - check it before
   printing anything from another printer's page (Plus 4 chutes mount
@@ -25,8 +28,9 @@ plate ([why](../box-reliability/README.md)). Options made for the Plus 5:
   routing; it's a wear item. [Q2/Plus 4 clip on
   Printables](https://www.printables.com/model/1462946-qidi-q2qidi-plus-4-ptfe-guide-clip)
   (may fit; [Q2 remix for newer printheads](https://cults3d.com/en/3d-model/tool/qidi-q2-ptfe-guide-clip-remixed-from-little-apollo)
-  exists). Zero-cost version: a spare clip in the cable chain holding the
-  tube lower.
+  exists, and Kapral001's Q2 tube guide is on [QIDI
+  Maker](https://www.qidimaker.com/en/home)). Zero-cost version: a spare clip
+  in the cable chain holding the tube lower.
 - **Box jam-resistant filament guide** - feeds, not the head:
   [Printables 1386069](https://www.printables.com/model/1386069-qidi-box-jam-resistant-filament-guide/comments)
   (context on [the reliability page](../box-reliability/README.md)). The hub
@@ -34,11 +38,13 @@ plate ([why](../box-reliability/README.md)). Options made for the Plus 5:
   failure.
 - **Capricorn-style tubing** for the Box runs - same story, less friction.
 
-## The riser ecosystem (D3P)
+## Risers: paid standard, free alternative
 
-If you're adding a Box, dryers or a cooler on top,
-[the D3P riser for Plus 5](https://cults3d.com/en/3d-model/tool/d3p-riser-for-qidi-plus-5)
-(Cults3D, paid, 3MF with print settings) is the de facto standard: a modular
+If you're adding a Box, dryers or a cooler on top, there are two mature
+options:
+
+**[D3P riser for Plus 5](https://cults3d.com/en/3d-model/tool/d3p-riser-for-qidi-plus-5)**
+(Cults3D, paid, 3MF with print settings) - the de facto standard: a modular
 20.5 cm riser with drawers, build-plate storage, LED channels, front/side
 vents - and a shelf system that grows with you. Free/cheap add-ons in the
 same family: Box extension shelves, single/dual dryer shelves, QIDI Cooler
@@ -46,8 +52,19 @@ base and shelves, cable management + PSU holder, Multiboard adapter,
 [top-mount TPU spool holder](https://cults3d.com/en/3d-model/tool/qidi-plus-5-d3p-top-mount-tpu-spool-holder),
 [side-mounted build-plate holder (8
 plates)](https://cults3d.com/en/3d-model/tool/side-mount-build-plate-holder-for-qidi-plus-5-d3p-riser).
-Author's material call: PETG or ASA for the riser (PLA only if it'll never
-sit near a dryer or the heated chamber exhaust).
+
+**[Technix AM's Plus 5 riser](https://makerworld.com/en/models/3259910-qidi-plus-5-riser-by-technix-am)**
+(MakerWorld, **free** - boost the author if it serves you well) - screw-free
+assembly (only the front roller frame needs 4x M3x16), an integrated LED
+strip that keeps the top glass sliding, two storage drawers, full access to
+the original USB port, and detachable rollers for the TPU spool mount (688
+bearings). **STEP/CAD files included** for remixing, plus a QIDI Studio slice
+file. ~3.1 kg of filament and 80+ print hours - the author says print the
+test block first and check contour compensation; ABS/ASA or PETG/PETG-CF
+recommended.
+
+Material call either way: PETG or ASA for anything living near a dryer or the
+chamber exhaust (PLA only if it never will).
 
 ## Chamber and filtration
 
@@ -96,6 +113,31 @@ enjoy re-tuning every temperature sensor relationship you have.
 - **The Box clicks** on every load - community grease mods exist for the
   feeders. Cosmetic, not functional.
 
+## Q2 compatibility: what carries over
+
+The Plus 5 and Q2 are the same generation - same Box hardware lineage, same
+SSH setup, same QIDILink tunnel, same firmware family - so when a Plus
+5-specific part doesn't exist, the Q2 shelf is the first place to look (and
+Q2 owners should be raiding this page right back). Rough guide:
+
+- **Usually transferable**: chamber-internal small parts (PTFE guides, exhaust
+  ducts, filter holders), Box accessories (spool drive upgrades, clip sets,
+  desiccant bins - the Box is shared across the generation), camera and
+  light mounts, hand tools. Check screw positions before committing filament.
+- **Maybe, with checking**: toolhead and extruder parts - close family, not
+  identical twins (the Q2 PTFE clip needed a remix for a newer printhead,
+  which tells you the geometry moved between revisions).
+- **No**: anything sized to the machine - build plates (the Q2 bed is
+  smaller), risers and external furniture (different footprints), bed-adjacent
+  parts, chute mounts.
+- The Q2 even has its own D3P riser from the same author as the Plus 5 one,
+  if you run both machines.
+
+Same logic one generation back: Plus 4 and Max 4 *parts* don't carry over
+(different beds and frames), but the [Max 4 community
+wiki's](https://github.com/thelegendtubaguy/QidiMax4CommunityWiki) hardware
+findings - bed screws, fan maps, power usage - carry over almost verbatim.
+
 ## Official and QIDI-published
 
 - **Height-increasing frame** - QIDI's own extender,
@@ -104,7 +146,6 @@ enjoy re-tuning every temperature sensor relationship you have.
 - [Box + spool holder on QIDI Maker](https://www.qidimaker.com/en/models/detail/2095854431347748865),
   also on Printables.
 - **Purge/waste**: see the top of this page.
-- Box and spool holder also exists as an ASA-CF profile on Maker.
 
 ## What you probably *don't* need
 
@@ -114,9 +155,20 @@ you find yourself modding those, something else is wrong - start with
 [the bed page](../bed-mesh-vs-printable-area/README.md) and
 [the print-quality page](../print-quality-tuning/README.md) instead.
 
+## Curated collections
+
+If you'd rather browse than read:
+
+- [Qidi Plus 5 - Printables collection](https://www.printables.com/@TaiHeng_4155107/collections/3862322) -
+  11 models, "made for or might work with the Qidi Plus 5"
+- [Qidi box - Printables collection](https://www.printables.com/@TaiHeng_4155107/collections/3866381) -
+  5 models for the Box
+- [Qidi Plus 5 - Cults3D collection by zqwzzle](https://cults3d.com/en/design-collections/zqwzzle/qidi-plus-5)
+
 ---
 
 *Everything here is community-published with links to the source models;
-availability moves, the Cults3D tag and r/QidiTech3D are where new parts
-surface first. Print chamber-adjacent parts in PETG minimum, ASA if they live
-near the exhaust or a dryer. Corrections and your own makes welcome.*
+availability moves, the [Cults3D tag](https://cults3d.com/en/tags/qidi),
+[QIDI Maker](https://www.qidimaker.com/en/home) and r/QidiTech3D are where new
+parts surface first. Print chamber-adjacent parts in PETG minimum, ASA if they
+live near the exhaust or a dryer. Corrections and your own makes welcome.*
