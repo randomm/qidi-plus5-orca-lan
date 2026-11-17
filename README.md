@@ -83,6 +83,11 @@ The schedule, the specific greases and oils (NLGI 2 for the Z screws, ~68 cSt
 for the shafts), thermal-grease intervals by filament temperature, spares
 worth owning, and the don'ts.
 
+### [Quality-of-life G-code and macro changes](./content/qol-gcode/README.md)
+Skip the end-of-print unload, 1080p timelapses, a 30 mm start purge instead of
+200+, UPS-safe sequential heating, heating the Box during Orca prints, the
+`enable_box` console flip, and cooler stepper drivers.
+
 ---
 
 ## LAN-only setup — this repo's origin
