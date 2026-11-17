@@ -11,7 +11,16 @@ The stock Orca **"Qidi X-Plus 5"** machine end G-code calls
 print the printer pulls the filament all the way back out of the toolhead.
 Annoying if you print the same material back to back. The printer-side
 `print_end` macro doesn't require it (it handles offsets, heaters, fans,
-steppers - not filament), so the fix is one line in the slicer:
+steppers - not filament), so the fix is one line in the slicer.
+
+*(Verified by reading the shipped files, not by vibes: the tracker's
+[`start_end.cfg`](https://github.com/thelegendtubaguy/Qidi-Plus5-Defaults/blob/main/config/klipper-macros-qd/start_end.cfg)
+contains no unload or retract anywhere in `print_end`, while
+[Orca's X-Plus 5 machine
+profile](https://github.com/OrcaSlicer/OrcaSlicer/blob/main/resources/profiles/Qidi/machine/Qidi%20X-Plus%205%200.4%20nozzle.json)
+carries the `UNLOAD_FILAMENT` line between its Z-hop and park moves - the
+unload is purely the slicer's idea, and deleting the line changes nothing
+on the printer side.)*
 
 Printer Settings -> Machine G-code -> **Machine end G-code**, comment out:
 
