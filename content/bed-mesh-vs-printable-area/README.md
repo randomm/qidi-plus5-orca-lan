@@ -171,6 +171,38 @@ If the first layer is patchy (wavy gaps, unfilled stripes), tram it:
   photos for the Max 4, whose bed uses the same arrangement:
   [Max 4 community wiki - Heated Bed
   Screws](https://github.com/thelegendtubaguy/QidiMax4CommunityWiki/blob/main/docs/heated_bed_screws.md).
+
+### Let the printer measure: SCREWS_TILT_ADJUST
+
+You don't have to eyeball the clock. The stock config already ships a
+`[bed_screws]` section - screws at 32.5,32.5 / 287.5,32.5 / 287.5,287.5 /
+32.5,287.5, i.e. the four bed corners (verify yours against the [firmware
+tracker](https://github.com/thelegendtubaguy/Qidi-Plus5-Defaults)) - so
+Klipper's built-in tramming helper works out of the box. In the Fluidd
+console, printer idle:
+
+```
+SCREWS_TILT_ADJUST
+```
+
+The printer probes each screw position and reports the correction as clock
+time: `front left screw (Base): adjust -01:15` means turn that nut one hour
+fifteen counter-clockwise, and 00:15 is a quarter turn. That's the
+hour:minute notation the [30-degree-marked community
+wrench](https://cults3d.com/en/3d-model/tool/qidi-plus-4-bed-tramming-tool)
+is built around - each marker is 00:05. Adjust the nuts, run it again, stop
+when everything reads ~00:00. Screw 1 is the reference; the others are
+reported relative to it.
+
+- Small increments still apply - nylon nuts, no locknut.
+- After physical tramming, re-run the bed mesh: the old mesh measured the
+  old shape.
+- This levels the *bed*; the gantry is `Z_TILT_ADJUST`'s job and the mesh
+  absorbs what's left. The tilt-error check at the bottom of this page is
+  how you notice the two disagreeing.
+- Fluidd's console is the easiest place to run it; headless, Moonraker's
+  `/printer/gcode/script?script=SCREWS_TILT_ADJUST` does the same.
+
 - Some beds don't tram flat. One owner was still at 0.6-0.8 mm after adjusting
   (and claims the plate is 3 mm thick vs 6 on the Plus 4 - unconfirmed).
   Fallbacks: shim low spots with Kapton tape, or contact support

@@ -101,7 +101,8 @@ issue first - they masquerade as calibration error.)
 
 The corrected value lands in the `[extruder]` section's `rotation_distance`
 in `printer.cfg` - which a firmware update replaces, so re-check yours
-after updates (the shipped value is visible in the
+after updates (stock ships `rotation_distance: 53.1` with a `1517:170`
+gear ratio, per the
 [firmware tracker](https://github.com/thelegendtubaguy/Qidi-Plus5-Defaults)).
 
 ## Flow ratio 0.98 is a blanket default, not a PLA value
