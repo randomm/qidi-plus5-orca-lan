@@ -32,7 +32,13 @@ about.
   bed with the wrench model in the printer's internal storage:
   [tramming section on the bed-mesh
   page](../bed-mesh-vs-printable-area/README.md#if-the-bed-itself-is-a-hill-tram-it-by-hand).
-- [ ] **Calibrate flow first**, before temperature towers or pressure advance.
+- [ ] **Calibrate the extruder before any filament tuning.** Confirm
+  100 mm commanded = 100 mm fed with the mark-and-measure method:
+  [Ellis' extruder calibration](https://ellis3dp.com/Print-Tuning-Guide/articles/extruder_calibration.html).
+  If the rotation distance is off, every later calibration - flow, PA -
+  measures a lie.
+- [ ] **Calibrate flow next**, after the extruder, before temperature towers or
+  pressure advance.
   The stock `filament_flow_ratio: 0.98` is a blanket default inherited by every
   material, not a measured PLA value - one unit measured 0.94 (4% over-extrusion,
   the classic cause of pronounced layer lines and blobby corners). A PA value
