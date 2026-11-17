@@ -101,7 +101,8 @@ about.
 5. **Tolerance/dimensional test** - verifies the tuning landed.
 6. **Purge chute or waste bin** - practical, and you'll want it before any
    multicolour job: the Box purges inside the chamber and it piles up as spiral
-   cones next to the plate.
+   cones next to the plate. [Models on the physical-mods
+   page](../physical-mods/README.md).
 
 ## Mac users, two specific prompts
 

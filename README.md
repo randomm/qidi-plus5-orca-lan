@@ -100,6 +100,12 @@ modules), how people recover, what's safe to mod at the config level, and the
 full mainline Kalico/Katapult conversions documented for the Plus 4 and Q2 -
 not yet the Plus 5.
 
+### [Physical mods and upgrades](./content/physical-mods/README.md)
+Purge chutes and bins, the filament-path fixes (PTFE guide clip,
+jam-resistant guide), the D3P riser ecosystem, chamber sealing and filtration,
+the Polar Cooler, 320x320 build plates that actually fit, and what you
+*don't* need to mod on this generation.
+
 ### [Community resources for the Plus 5](./content/community-resources/README.md)
 The sibling wikis (Plus 4, Q2, Max 4), the firmware tracker, the fix and tool
 repos, the official pages, and where the discussion actually happens.
