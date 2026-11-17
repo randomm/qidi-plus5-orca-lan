@@ -73,6 +73,11 @@ mandatory on current firmware), what actually breaks ranked by report volume,
 feed-failure causes and fixes, auto-refill reports, the economics of
 single-nozzle colour changes, and a decision guide.
 
+### [Runout, pause timeouts, and the real spool-refill window](./content/runout-and-pause-timeouts/README.md)
+The 12 h `[idle_timeout]` in printer.cfg is not your refill window - QIDI's
+PAUSE macro overrides it to 72 h in RAM, the hotend dies instantly on runout,
+and here's what actually happens to a job that sits paused past the line.
+
 ---
 
 ## LAN-only setup — this repo's origin
