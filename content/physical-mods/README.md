@@ -162,11 +162,19 @@ Q2 owners should be raiding this page right back). Rough guide:
   ducts, filter holders), Box accessories (spool drive upgrades, clip sets,
   desiccant bins - the Box is shared across the generation), camera and
   light mounts, hand tools. Check screw positions before committing filament.
-- **Maybe, with checking**: toolhead and extruder parts - close family, not
-  identical twins (the Q2 PTFE clip needed a remix for a newer printhead,
-  which tells you the geometry moved between revisions). Nozzle/hotend
-  storage is the same story: the Q2 boxes are sized for Q2 nozzles (52.9 mm
-  long, 7 mm hex) - measure yours before printing the trays.
+- **Confirmed shared, no checking needed**: QIDI sells the bimetal nozzles,
+  tungsten-carbide nozzles, hotend and model cooling fans, hotend silicone
+  socks, cutter blades, the 3-in-1 air filter and the camera as single
+  "PLUS5/Q2/Q2C" SKUs in the official
+  [accessories store](https://qidi3d.com/collections/plus5-accessories) -
+  Q2 spares are literally Plus 5 spares. That settles the nozzle-storage
+  question above: trays sized for Q2 nozzles fit Plus 5 nozzles, because
+  they are the same nozzle.
+- **Maybe, with checking**: other toolhead parts - close family, not
+  identical twins. The hotend *assembly* is a Plus5-only part in the store
+  (so Q2 hotend-sized storage is still measure-first), and the Q2 PTFE clip
+  needed a remix for a newer printhead, which tells you the geometry moved
+  between revisions.
 - **No**: anything sized to the machine - build plates (the Q2 bed is
   smaller), risers and external furniture (different footprints), bed-adjacent
   parts, chute mounts.
@@ -185,6 +193,15 @@ findings - bed screws, fan maps, power usage - carry over almost verbatim.
   (from the official wiki).
 - [Box + spool holder on QIDI Maker](https://www.qidimaker.com/en/models/detail/2095854431347748865),
   also on Printables.
+- [The Plus5 accessories store](https://qidi3d.com/collections/plus5-accessories) -
+  the official spares catalogue. Worth knowing: several parts are **shared
+  SKUs across the generation** - nozzles (bimetal and tungsten-carbide),
+  cooling fans, silicone socks, cutter blades, the 3-in-1 air filter and the
+  camera are "PLUS5/Q2/Q2C" parts; wiper silicone cases, waste-bin pusher
+  plates and nozzle wipers are "PLUS5/Max4"; the Polar Cooler spans all
+  three. Plus5-only: hot end, extruder, build plates, screen, boards and
+  cables. Practical upshot: if a part shows out of stock under its Plus5
+  listing, check the same SKU under the Q2 or Max4 collection.
 - **Purge/waste**: see the top of this page.
 
 ## What you probably *don't* need
