@@ -4,22 +4,26 @@ Good news first: you don't need to build these by hand. OrcaSlicer already ships
 X-Plus 5 profiles. They landed in `main` on 2026-08-07,
 [PR #15163](https://github.com/OrcaSlicer/OrcaSlicer/pull/15163).
 
-The catch: that merge is newer than the last stable release (v2.4.2, 2026-07-07).
-So a stable build won't have them yet.
+That merge made it into **v2.5.0 stable (2026-11-07)**, so any current release
+ships the profiles. First run: add printer, QIDI, X-Plus 5, pick your nozzle
+(0.2 / 0.4 / 0.6 / 0.8, 0.4 is the default). That's it.
 
-## Getting them
+## Which version to actually run
 
-Use a nightly. Grab `OrcaSlicer_..._nightly` from the
-[nightly-builds release](https://github.com/OrcaSlicer/OrcaSlicer/releases/tag/nightly-builds).
-First run: add printer, QIDI, X-Plus 5, pick your nozzle (0.2 / 0.4 / 0.6 / 0.8,
-0.4 is the default). That's it.
+**v2.5.1 (2026-11-14) or newer.** Not for the profiles - for the Box. QIDI's
+October 2026 firmware changed how the Box reports filament (QIDI filament IDs
+plus hex colours instead of numbers), and OrcaSlicer from before the 2.5.0
+series crashes on "Sync filaments" against it
+([#16660](https://github.com/OrcaSlicer/OrcaSlicer/issues/16660)). The 2.5
+series also landed the per-filament Box slot picker
+([PR #16723](https://github.com/OrcaSlicer/OrcaSlicer/pull/16723) - see
+[the box-colour page](../qidi-box-colour-mapping/README.md)) and the
+slot-material sync fix
+([#17089](https://github.com/OrcaSlicer/OrcaSlicer/pull/17089)).
 
-Once a stable ships after August 2026 it'll fold these in and this stops being a
-nightly-only thing.
-
-Staying on stable for now? You can copy the X-Plus 5 files from
-`resources/profiles/Qidi/` on OrcaSlicer's `main` into your install and add the
-model to `Qidi.json`. Doable, but fiddlier than just running the nightly.
+(Pre-2.5.0, for the record, the workaround was a nightly build - or copying the
+X-Plus 5 files from `resources/profiles/Qidi/` on `main` into a 2.4.x install
+and adding the model to `Qidi.json`. Obsolete now.)
 
 ## Are the shipped profiles any good?
 
