@@ -114,6 +114,65 @@ After a firmware update, re-adding your mods is a single
   ([the Fluidd panel page](../qidi-box-fluidd-panel/README.md) collects the
   options).
 
+## Valve Oil: the middle ground
+
+If "config tweaks are safe but limited" and "full mainline loses the screen and
+Box" are both frustrating, there's a middle road:
+**[Valve Oil](https://github.com/thelegendtubaguy/Valve-Oil)** by thelegendtubaguy
+(the same person behind the
+[firmware tracker](https://github.com/thelegendtubaguy/Qidi-Plus5-Defaults)).
+It's a Klipper companion that installs alongside QIDI's stack — one command,
+keeps the touchscreen and Box, and adds real fixes.
+
+**Supports the Plus 5** on firmware `01.01.02.01` (also the Smart 5 and Max 4).
+Install:
+
+```bash
+ssh qidi@<ip>
+/bin/bash -c "$(curl -fsSL https://github.com/thelegendtubaguy/valve-oil/releases/latest/download/install-latest.sh)"
+```
+
+The installer asks every question first, shows a summary, and touches nothing
+until you confirm. It flashes Valve Oil's own board firmware to the toolhead
+and each QIDI Box (re-run input shaper after).
+
+What you get, mapped to this wiki's pages because it solves a lot of the
+problems documented here in one go:
+
+- **Faster print starts** — shorter homing and probing, less fixed waiting.
+  Box filament **stays loaded between prints** of the same material — solves
+  the [end-of-print unload](qol-gcode) problem without a slicer edit.
+- **QIDI Box** — faster and tunable loading/unloading, Box heater control in
+  Fluidd, edits to QIDI's filament list (including Bambu, Overture, Polymaker
+  brands), and spool-tag reading (Anycubic, Elegoo, Bambu, Creality, plus
+  [open-tag writing](https://github.com/thelegendtubaguy/Valve-Oil/blob/main/docs/qidi-box.md#writing-spool-tags)).
+  This is the [Fluidd panel breakage](../qidi-box-fluidd-panel/) fix taken to
+  the next level — Valve Oil ships a current Fluidd with Box support rebuilt.
+- **Current Fluidd** (v1.37.7-tltg) — no more working around the stock Fluidd
+  panel bugs.
+- **Board firmware fixes** for the toolhead and Box — upstream Klipper bug
+  fixes in the C helper library (pressure-advance leak, homing timeout, step
+  queue overruns).
+- **OS optimizations** — kernel and system tweaks applied on install and every
+  boot.
+- **Add-ons**: Tailscale, ZeroTier, OctoEverywhere, Obico — installed and
+  managed through Valve Oil, running at lower priority away from Klipper's
+  CPUs.
+- **Automatic updates** — hourly check, installs while the printer is idle,
+  update window support. QIDI firmware updates are delivered through Valve Oil
+  (the touchscreen no longer installs them).
+- **USB touchscreen installer** — install from a USB drive using the printer's
+  own touchscreen; no SSH needed.
+- **Tools**: input shaper with sweeping resonance test,
+  [bed soak test](https://github.com/thelegendtubaguy/Valve-Oil/blob/main/docs/tools.md),
+  external spool runout switch, Max 4 motor slip monitor.
+
+Valve Oil is the middle ground this page's decision table was missing: more
+than config tweaks, less destructive than mainline, touchscreen and Box
+survive. The [full feature list](https://github.com/thelegendtubaguy/Valve-Oil#what-you-get)
+and [changelog](https://github.com/thelegendtubaguy/Valve-Oil/blob/main/CHANGELOG.md)
+are on the repo.
+
 ## Going full mainline (Kalico / Katapult / kiauh on a clean system)
 
 The real answer to "I want vanilla Klipper" is: wipe QIDI's host stack, flash
@@ -152,9 +211,10 @@ Klipper features, your own recovery story.
 | Want | Do |
 |---|---|
 | Macros, tuning, KAMP tweaks, UI changes | Config level - safe, survives updates with one re-added line |
+| Box speedups, current Fluidd, board fixes, add-ons, auto-updates — without losing the screen or Box | **[Valve Oil](#valve-oil-the-middle-ground)** — one-command install alongside stock, keeps touchscreen and Box, supports Plus 5 on `01.01.02.01` |
 | ShakeTune-grade input shaper analysis | Stock `SHAPER_CALIBRATE` covers it; deep analysis waits for mainline |
 | Vanilla Klipper / Kalico / kiauh | Full conversion - documented for Plus 4 (ST-Link) and Q2 (no ST-Link), nothing published for the Plus 5 yet |
-| To keep the touchscreen and Box automation | Stay stock; there is no mainline-with-screen option for this generation yet |
+| To keep the touchscreen and Box but get all mainline features | No option that does both yet; Valve Oil is the closest (real fixes, keeps both) |
 
 ---
 
