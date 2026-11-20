@@ -115,19 +115,45 @@ During/after a print, `value_t{n}` should read `slot{n}`, and Moonraker's
 
 ## Is it a hack?
 
-Yeah. Four lines in your start gcode isn't how it should be. The real fix belongs
-upstream in OrcaSlicer's `QidiPrinterAgent`: it already *reads* the box and imports
-the colours, it just never *writes* the tool->slot mapping back. If it wrote the
-mapping you actually picked in the AMS dialog for that slice, you'd get the right
-colours with no start-gcode edits - and it would respect runout/manual remaps
-instead of stamping over them.
+Was. Four lines in your start gcode was never how it should be: the real fix
+belonged upstream in OrcaSlicer's `QidiPrinterAgent`, which already *read* the
+box and imported the colours but never *wrote* the tool->slot mapping back.
 
-Upstream state, for the record: the box issues everyone cites (#11671 and
-[#13236](https://github.com/OrcaSlicer/OrcaSlicer/issues/13236)) are both closed -
-they fixed the *read* side. The *write* side is the remaining gap. I proposed a
-profile-level version of this fix as OrcaSlicer
-[PR #15663](https://github.com/OrcaSlicer/OrcaSlicer/pull/15663) but withdrew it
-after the runout/remap feedback above: forcing a mapping in the *shared* profile is
-the wrong layer. The write-back belongs in the C++ agent, per-slice, from your AMS
-selection. Until that exists, the four lines get you printing the colours you asked
-for - as a personal choice, with the trade-off above.
+**It does now.** [PR #16723](https://github.com/OrcaSlicer/OrcaSlicer/pull/16723)
+(merged 2026-10-27, in **v2.5.0 stable** and later) gives the agent a
+per-filament slot picker in the print dialog - filled from live box state - and
+writes the `value_t` mapping at print start, per job, from what you actually
+picked. It respects runout and manual remaps instead of stamping over them,
+which is exactly the trade-off that sank the start-gcode version as a
+shared-profile fix.
+
+Enable it: Preferences -> Developer -> **Use printer agents instead of print
+hosts** (Moonraker on port 7125 still does the upload). Then pick your slots in
+the print dialog and stop reading this page.
+
+For the record: I proposed the start-gcode fix as a shared OrcaSlicer profile
+change ([PR #15663](https://github.com/OrcaSlicer/OrcaSlicer/pull/15663)) and
+withdrew it after the runout/remap feedback above. Right diagnosis, wrong layer.
+
+### When you still want the four lines
+
+- OrcaSlicer older than 2.5.0 - though don't stay there: on October-2026 QIDI
+  firmware, 2.4.x sync crashes outright
+  ([#16660](https://github.com/OrcaSlicer/OrcaSlicer/issues/16660)).
+- The CLI lane. The agent is a print-dialog feature; headless slicing keeps
+  explicit `value_t` bindings - see
+  [the headless page](../headless-colour-slicing/README.md).
+
+### The gap that remains
+
+The agent deliberately leaves `enable_box` alone (QIDI Studio writes it before
+every print; Orca doesn't). So the printer keeps whatever box state the last
+print left, and a print sent from Orca can run with the Box enabled or disabled
+the wrong way round
+([#17227](https://github.com/OrcaSlicer/OrcaSlicer/issues/17227), Nov 2026).
+Console workaround:
+
+```
+SAVE_VARIABLE VARIABLE=enable_box VALUE=0    ; print from the external spool
+SAVE_VARIABLE VARIABLE=enable_box VALUE=1    ; print from the box
+```

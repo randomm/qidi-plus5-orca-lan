@@ -1,96 +1,155 @@
-# QIDI X-Plus 5 — OrcaSlicer + LAN-only notes
+# QIDI Community X-Plus 5 Wiki
 
-Field notes from getting a **QIDI X-Plus 5** (Klipper-based, ~Aug 2026) running
-LAN-only with OrcaSlicer, no QIDI cloud. Written against QIDIStudio 02.07.02.60
-and OrcaSlicer `main` in September 2026.
+Notes and fixes for the QIDI X-Plus 5, in the same spirit as the community
+[Plus 4](https://github.com/qidi-community/Plus4-Wiki) and
+[Q2](https://github.com/qidi-community/q2-wiki) wikis.
 
-## TL;DR
+The Plus 5 sits close to the Q2/Max-4 generation, so a lot of their pages carry
+over. But a couple of things did change - the SSH account, the cloud tunnel - and
+that's mostly what these pages are here to catch.
 
-- **OrcaSlicer already ships X-Plus 5 profiles.** They landed in `main` on
-  2026-08-07 (commit `b216813b`, PR #15163) and are **byte-for-byte faithful**
-  to QIDIStudio's (46/48 critical machine params identical; the 2 diffs are
-  deliberate schema fixes). They are **not** in stable v2.4.2 (released before
-  that commit) — use a **nightly** build, or copy the 21 machine/process files
-  from `main` into a stable install. No hand-porting needed.
-- **The printer runs fully LAN-only.** The only thing that reaches QIDI's
-  servers is a `frpc` reverse tunnel ("QIDILink") exposing the local Fluidd UI.
-  It can be turned off from the printer's LAN switch or hard-disabled via
-  systemd. Everything else (slicing, printing, webcam, multi-colour box, mesh)
-  is local.
-- **SSH default for this generation is `qidi` / `qiditech`** (the older
-  `mks` / `makerbase` no longer works on the X-5/Q2/Max-4 generation).
-- **The QIDI Box can load the wrong colour** over OrcaSlicer/Moonraker: Orca
-  imports the box colours but never writes the tool→slot mapping, so a fresh slice
-  can load a stale slot. A four-line `SAVE_VARIABLE` identity map in the machine
-  start G-code fixes it for a personal, slot-ordered setup (verified on hardware) —
-  but it overrides the box's runout/manual remap, so it's a **personal-preset**
-  choice, not for the shared profile (an OrcaSlicer profile PR was proposed and
-  withdrawn on that basis). The real fix belongs in Orca's `QidiPrinterAgent`. See
-  the box-colour wiki page.
-- **Two things in the stock profile will bite you.** Orca's printable area
-  (320x320) is larger than the printer's probed bed mesh (305x305), so parts
-  placed in that 15 mm band print on *extrapolated* bed height - that cost one
-  print and left the gantry 6.35 mm out of level, and Moonraker still logged the
-  job as `completed`. And `inner_wall_acceleration: 0` silently inherits
-  `default_acceleration` = 10000 mm/s2 on a machine whose measured Y resonance is
-  36.2 Hz. Both are profile-level, not unit-specific.
-- **The stock flow ratio is a blanket default, and it over-extrudes.**
-  `filament_flow_ratio: 0.98` is set on `fdm_filament_common`, the base every
-  material inherits - it is not a PLA value and not a measured one. Calibrated
-  on this unit: **0.94**, i.e. 4% too much material in every line, which is the
-  classic cause of pronounced layer lines. Calibrate flow *before* pressure
-  advance: PA measured against wrong flow is wrong. (QIDI's docs put direct-drive
-  PA near the low end of 0.050-1.000, which made the shipped 0.034 look too low -
-  but measured on this machine the usable top is ~0.04, so 0.034 was fine. That
-  hypothesis is recorded as tested and wrong.) See the print-quality wiki page.
+## Official QIDI wiki
 
-- **The QIDI Box is a sealed box, which makes it good at storage and bad at
-  drying.** QIDI's own wiki tells you to open the rear vent by hand during a cycle,
-  and the measurement backs it: heating a loaded box moved 1.6x more water into the
-  box air, which would have gone straight back into the filament on cooldown (69% RH
-  projected, from a 43% start). PLA is additionally locked out of both drying modes,
-  because the spool does not rotate and the heater elements reach 85.8 C against a
-  40 C air setpoint. Ignoring that block cost me a jam: the filament went soft,
-  **necked** under feeder tension down to well below 1.75 mm, and then would neither
-  feed (no column strength, it buckles) nor retract (too thin for the gears to
-  grip). Recovery needed the PTFE tubes released at both ends and a 3 cm stub worked
-  out of a feed hole by hand. There is no manual release lever on the box feeders.
-  And `heater_box1` cannot be set from Fluidd at all: it has no config section,
-  being created at runtime by QIDI's closed box module. See the box-drying wiki page.
+[QIDI X-Plus 5 support page](https://wiki.qidi3d.com/en/Plus5)
 
-## What's here
+---
 
-- **`NOTES.md`** — the full write-up: profile map, flattened machine params,
-  the upstream comparison, and the read-only printer recon (LAN/cloud, SSH,
-  closed `.so` modules, QIDILink tunnel + how to disable it). Findings are
-  tagged `[VERIFIED]` / `[READ]` / `[UNCONFIRMED]`.
-- **`plus5-wiki/`** — community-wiki pages written for other Plus 5 owners:
-  SSH access, OrcaSlicer profiles, LAN mode + the QIDILink tunnel, QIDI Box
-  colour mapping, the bed-mesh/printable-area trap, and stock-profile tuning.
-- **`tools/flatten.py`** — resolves QIDIStudio/Orca `inherits` chains into a
-  flattened effective config. Usage: `flatten.py <bundle-dir> <preset-name>`.
+## Getting in and set up
 
-## Not included (by design)
+### [Just arrived: a checklist for a new unit](./content/getting-started/README.md)
+First boot, first print, first week - what to verify on a new X-Plus 5, roughly
+in order, with the page that explains each item.
 
-To keep this shareable, the repo excludes (see `.gitignore`): QIDI's copyrighted
-profile bundle, this printer's live config (serial numbers, network IDs, QIDI's
-proprietary macros), a GPL cache of Orca's profiles, and QIDI-derived flattened
-JSON/G-code. Per-unit identifiers (IP, serials, MAC, the tunnel's private
-subdomain) have been redacted from the notes.
+### [Known issues: a symptom-first index](./content/known-issues/README.md)
+What breaks and where the fix lives - the bed hill, heat-creep jams with the
+lid closed, leveling-before-every-print, Box feed failures and material limits,
+Box hub compatibility, firmware recovery, detection limits. Each entry links
+the page (or source) that goes deep.
 
-The `qidi`/`qiditech` SSH default and the QIDILink server hostname are retained:
-both are fleet-wide values already documented publicly by the QIDI community,
-not secrets specific to one printer.
+### [SSH access](./content/ssh-access/README.md)
+`qidi` / `qiditech`. The old `mks` / `makerbase` doesn't work anymore.
 
-## Credits / sources
+### [X-Plus 5 profiles in OrcaSlicer](./content/orcaslicer-profiles/README.md)
+Already shipped in OrcaSlicer. Use a nightly until the next stable, and yes, they
+turned out to be a faithful port.
 
-X-Plus 5 support in OrcaSlicer: the OrcaSlicer project (PR #15163). SSH
-credential for this generation: QIDI community (r/QidiTech3D, the Qidi-Max-4
-community repos, QIDITECH/QIDI_PLUS4 issue #21). This repo redistributes none of
-their code or profile data.
+### [LAN mode and the QIDILink cloud tunnel](./content/lan-mode-and-qidilink/README.md)
+What LAN mode actually does under the hood, and how to shut the cloud tunnel off
+properly. The Plus 5 uses `frp` now, not the Plus 4's `udp_server`, so the disable
+steps are different.
 
-## License
+### [Getting the QIDI Box to print the right colour from OrcaSlicer](./content/qidi-box-colour-mapping/README.md)
+Out of the box it loads the wrong slot every time. Why (a stale `value_t0`
+variable Orca never writes), and the four-line start-gcode fix that makes colour
+selection actually work.
 
-Apache License 2.0 — see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE). The
-license covers only the original tool and write-up here; it does not extend to
-QIDI's or OrcaSlicer's data, which this repo does not redistribute.
+### [The stock Fluidd panel, the 2026 firmware, and the `?` slots](./content/qidi-box-fluidd-panel/README.md)
+Every box slot shows `?`, the external spool resets to "PLA Basic", and the print
+dialog refuses with "No filament detected". Not your unit - the bundled Fluidd was
+never updated for the QF-ID format change. Patch it, route around it, or script it.
+
+---
+
+## Printing well, and not wrecking things
+
+### [The 15 mm band at the edge of the bed that will eat your print](./content/bed-mesh-vs-printable-area/README.md)
+Orca thinks the bed is 320x320. The printer only probes to 305x305. Parts placed in
+between get printed on bed height nobody measured. Cost me a print and 6.35 mm of
+gantry tilt.
+
+### [Things in the stock profile worth knowing before you tune](./content/print-quality-tuning/README.md)
+Inner walls silently running at 10000 mm/s2, a volumetric cap that makes the speed
+tiers meaningless, a flow ratio that is a blanket default for every material, and
+the corner test that tells you which defect you are looking at.
+
+### [Slicing multi-colour jobs completely headless (CLI lane)](./content/headless-colour-slicing/README.md)
+**Separate use case:** no GUI at all — `orca-slicer` CLI over SSH, Moonraker
+upload/start, QIDI Box swaps. The assemble-list path that actually works, the
+per-object `auto_drop` trap, per-job `value_t` bindings, and what really
+controls thin-film quality. Read only if you're scripting the slicer.
+
+### [The QIDI Box does not vent itself](./content/qidi-box-drying/README.md)
+Mine sat at 43% RH for days doing nothing. Why a sealed box is bad at drying, why
+PLA is locked out of both drying modes, why the heater elements hit 85 C, and how
+to drive it from the console when Fluidd refuses.
+
+### [How reliable is the QIDI Box, really](./content/box-reliability/README.md)
+Community evidence, Oct-Nov 2026: the OrcaSlicer version timeline (2.5.1 is
+mandatory on current firmware), what actually breaks ranked by report volume,
+feed-failure causes and fixes, auto-refill reports, the economics of
+single-nozzle colour changes, and a decision guide.
+
+### [Runout, pause timeouts, and the real spool-refill window](./content/runout-and-pause-timeouts/README.md)
+The 12 h `[idle_timeout]` in printer.cfg is not your refill window - QIDI's
+PAUSE macro overrides it to 72 h in RAM, the hotend dies instantly on runout,
+and here's what actually happens to a job that sits paused past the line.
+
+### [Maintenance: what to lube, when, and with what](./content/maintenance/README.md)
+The schedule, the specific greases and oils (NLGI 2 for the Z screws, ~68 cSt
+for the shafts), thermal-grease intervals by filament temperature, spares
+worth owning, and the don'ts.
+
+### [Quality-of-life G-code and macro changes](./content/qol-gcode/README.md)
+Skip the end-of-print unload, 1080p timelapses, a 30 mm start purge instead of
+200+, UPS-safe sequential heating, heating the Box during Orca prints, the
+`enable_box` console flip, and cooler stepper drivers.
+
+### [Box and printer internals: commands, variables, and traps](./content/box-internals/README.md)
+The `save_variables` schema (0-based slots, `slot16` = external), load/unload/
+eject commands and their timings, dryer commands, the Moonraker endpoints
+worth knowing, and the traps - `M106 P3` killing chamber heating, the
+`SLOT=99` Klipper shutdown, `#` in macro code.
+
+### [Klipper mods: what you can change, what breaks, and going mainline](./content/klipper-mods/README.md)
+Why kiauh and the update buttons brick QIDI machines (a fork with closed
+modules), how people recover, what's safe to mod at the config level, and the
+full mainline Kalico/Katapult conversions documented for the Plus 4 and Q2 -
+not yet the Plus 5.
+
+### [Physical mods and upgrades](./content/physical-mods/README.md)
+Purge chutes and bins, the filament-path fixes (PTFE guide clip,
+jam-resistant guide), the D3P riser ecosystem, chamber sealing and filtration,
+the Polar Cooler, 320x320 build plates that actually fit, and what you
+*don't* need to mod on this generation.
+
+### [Community resources for the Plus 5](./content/community-resources/README.md)
+The sibling wikis (Plus 4, Q2, Max 4), the firmware tracker, the fix and tool
+repos, the official pages, and where the discussion actually happens.
+
+---
+
+## LAN-only setup — this repo's origin
+
+These pages started as field notes from running one X-Plus 5 **LAN-only with
+OrcaSlicer, no QIDI cloud**. The full write-up — profile map, flattened machine
+parameters, the upstream comparison, and the read-only printer recon (SSH, the
+closed `.so` modules, the QIDILink tunnel and how to disable it) — lives in
+[lan-only/](./lan-only/README.md), with the profile tooling
+([tools/flatten.py](./tools/flatten.py)) and the Orca profile patches
+([contrib/](./contrib/)) alongside.
+
+## AI use disclosure
+
+The pages original to this wiki (SSH access, the Orca profiles, LAN mode,
+box colour mapping, the bed-mesh trap, print-quality tuning, box drying and
+the headless lane) are human-written field notes. Everything added in this
+fork — the restructure and the newer pages (the checklist, known issues,
+reliability, maintenance, physical mods, klipper mods and the rest) — was
+drafted with AI assistance at the maintainer's direction:
+
+- The maintainer curated the sources — which threads, repos, models and
+  collections matter — and reviewed and committed every change.
+- Drafting, source-gathering and the mechanical link checks were done by an
+  AI assistant working from those sources.
+- Community-sourced claims are attributed and linked as such; nothing is
+  claimed as "verified on my unit" unless it actually was.
+
+Treat the AI-assembled summaries the way you'd treat any secondhand report:
+follow the linked source before betting filament — or a firmware flash — on
+it. Corrections welcome; that's the whole point of a community wiki.
+
+---
+
+*All of this started from poking at one X-Plus 5 read-only over SSH. Verified vs
+inferred is called out where it matters. Corrections and additions very welcome -
+that's the whole point of a community wiki...*

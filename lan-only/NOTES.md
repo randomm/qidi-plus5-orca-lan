@@ -828,7 +828,7 @@ layer for a shared profile. **PR #15663 to be closed/withdrawn.**
 **Resolution:**
 - Keep the four `SAVE_VARIABLE` lines as a **personal preset** choice on this
   machine (we load colours in slot order and don't rely on runout-resume). The
-  trade-off is documented in `plus5-wiki/content/qidi-box-colour-mapping/`.
+  trade-off is documented in `content/qidi-box-colour-mapping/`.
 - The correct upstream fix stays: OrcaSlicer's `QidiPrinterAgent` (which already
   *reads* the box) should *write* the tool→slot mapping the user selected in the
   AMS dialog **per slice** — respecting runout/manual remaps — instead of a

@@ -39,4 +39,6 @@ sudo passwd root
 - Don't point kiauh or any git-based updater at this printer. QIDI ships the
   klipper and moonraker trees with the `.git` and version files stripped out:
   there's no upstream to pull from, so the tooling just fights the fork. QIDI
-  warns about this too, and now you can see why.
+  warns about this too, and now you can see why. The whole kiauh / mainline
+  Klipper story - including how people recover when it goes wrong - has
+  [its own page](../klipper-mods/README.md).

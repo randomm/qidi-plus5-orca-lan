@@ -88,7 +88,31 @@ Raise the volumetric limit only after a flow calibration. And if you do, watch o
 for any hard-coded speed values you left behind, because they then become the new
 ceiling.
 
+## Step zero: extruder calibration, before any of this
+
+The flow-ratio tuning below assumes the extruder feeds what it's told. If
+100 mm commanded isn't 100 mm fed, every calibration after it - flow,
+pressure advance, retraction - is measuring a lie. The mark-and-measure
+method takes ten minutes:
+[Ellis' Print Tuning Guide - extruder
+calibration](https://ellis3dp.com/Print-Tuning-Guide/articles/extruder_calibration.html).
+(Ellis' note applies here too: rule out a partial clog or extruder tension
+issue first - they masquerade as calibration error.)
+
+The corrected value lands in the `[extruder]` section's `rotation_distance`
+in `printer.cfg` - which a firmware update replaces, so re-check yours
+after updates (stock ships `rotation_distance: 53.1` with a `1517:170`
+gear ratio, per the
+[firmware tracker](https://github.com/thelegendtubaguy/Qidi-Plus5-Defaults)).
+
 ## Flow ratio 0.98 is a blanket default, not a PLA value
+
+> OrcaSlicer's built-in filament calibration places [pressure advance
+> before flow](https://www.orcaslicer.com/wiki/guides/calibration_guide) -
+> PA is more often wrong out of the box, and cleaner corners from tuned PA
+> make the flow test easier to read. The ordering below is what worked on
+> *this* machine, measured with the numbers that follow; both orders
+> converge if you re-check PA after a big flow change.
 
 This turned out to be the big one, so it goes first.
 
